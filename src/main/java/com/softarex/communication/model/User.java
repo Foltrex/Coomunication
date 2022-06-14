@@ -10,5 +10,5 @@ public class User implements Identifable {
     private final String email;
     private final String phoneNumber;
     private final String password;
-    
+
 }
