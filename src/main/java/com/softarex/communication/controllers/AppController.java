@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class AppController {
-    private static final String LOGIN_PAGE = "index";
+    private static final String LOGIN_PAGE = "login";
 
-    @GetMapping(value = {"/", "/login", "/index"})
+    @GetMapping("/login")
     public String showLoginPage() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {

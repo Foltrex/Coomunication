@@ -3,6 +3,7 @@ package com.softarex.communication.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -25,11 +26,13 @@ public class Conversation implements Identifable {
     @JoinColumn(name = "receiver_id")
     User receiver;
 
+    @Size(min = 1, max = 320)
     @Column(name = "question_text", nullable = false, length = 320)
     String questionText;
 
     AnswerType answerType;
 
+    @Size(max = 320)
     @Column(name = "answer_text", length = 320)
     String answerText;
 
