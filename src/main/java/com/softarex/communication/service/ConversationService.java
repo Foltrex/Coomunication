@@ -21,6 +21,7 @@ public class ConversationService {
         this.conversationDao = conversationDao;
     }
 
+
     public List<Conversation> findAll() {
         return conversationDao.findAll();
     }

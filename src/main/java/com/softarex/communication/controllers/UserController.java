@@ -18,8 +18,12 @@ public class UserController {
     private static String REGISTRATION_PAGE = "registration";
     private static String HOME_PAGE = "conversations";
 
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/registration")
     public String registerUser(Model model) {

@@ -51,4 +51,18 @@ public class MessengerUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public String getName() {
+        return user.getName();
+    }
+
+    public String getSurname() {
+        return user.getSurname();
+    }
+
+    public String getFullName() {
+        String name = this.getName();
+        String surname = this.getSurname();
+        return String.format("%s %s", name, surname);
+    }
 }
