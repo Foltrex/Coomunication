@@ -5,15 +5,14 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <title>Hello, world!</title>
 </head>
-<body>
+<body class="bg-light">
     <div class="text-center mt-5">
-        <form th:action="@{/login}" method="post" style="max-width:480px;margin:auto;">
+        <form th:action="@{/login}" class="bg-white border rounded-lg p-4" method="post" style="max-width:480px;margin:auto;">
             <img class="mt-4 mb-4" th:src="@{/images/logo.png}"/>
             <h1 class="h3 mb-3 font-weight-normal">Log In</h1>
             <label for="email" class="sr-only">Email</label>

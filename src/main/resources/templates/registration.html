@@ -11,10 +11,10 @@
 
     <title>Hello, world!</title>
 </head>
-<body>
+<body class="bg-light">
 <div class="text-center mt-2">
-    <form th:action="@{/registration}" method="post" th:object="${user}" style="max-width:480px;margin:auto;">
-        <img class="mt-4 mb-4" th:src="@{/images/logo.png}/>
+    <form th:action="@{/registration}" class="bg-white border rounded-lg p-4" method="post" th:object="${user}" style="max-width:480px;margin:auto;">
+        <img class="mt-4 mb-4" th:src="@{/images/logo.png}"/>
         <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
 
         <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}">
