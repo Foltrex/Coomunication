@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/1f4939e33e.js" crossorigin="anonymous"></script>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+
+<div th:fragment="addQuestionModal" >
+    <div id="addQuestionModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/conversations/new}" method="post" th:object="${conversation}">
+                    <div class="modal-header bg-light">
+                        <h4 class="modal-title">Add question</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}">
+                            <p th:each="err : ${#fields.allErrors()}" th:text="${err}"></p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>For user</label>
+                            <select id="ddUser" name="user" th:field="*{receiver}" class="form-select" aria-label="Default select example">
+                                <option th:each="user : ${users}"
+                                        th:value="${user}" th:text="${user.email}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Question</label>
+                            <input type="text" th:field="*{questionText}" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Answer type</label>
+<!--                            option -->
+                            <select th:field="*{answerType}" id="ddAnswerType" name="answerType" class="form-select" aria-label="Default select example">
+                                <option th:each="answerType : ${T(com.softarex.communication.domain.Conversation.AnswerType).values()}"
+                                        th:value="${answerType.type}" th:text="${answerType.type}"></option>
+                            </select>
+                        </div>
+                        <!-- one of answer type must be lower -->
+                        <div id="answer-form" class="form-group">
+                            <label>Options</label>
+                            <textarea th:field="*{answerText}" id="answer" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <input type="button" class="btn border rounded-lg btn-default bg-white" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn border rounded-lg btn-success bg-primary" value="Add">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="editQuestionModal" >
+    <div id="editQuestionModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Employee</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-info" value="Save">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="deleteQuestionModal" >
+    <div id="deleteQuestionModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Employee</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete these Records?</p>
+                        <p class="text-warning"><small>This action cannot be undone.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-danger" value="Delete">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

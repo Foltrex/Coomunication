@@ -8,39 +8,41 @@ import javax.validation.constraints.Size;
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 
+// TODO: make final
+
 @Entity
 @Table(name = "conversations")
-@Builder
-@Value
+@Data
+@NoArgsConstructor
 public class Conversation implements Identifable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    Long id;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false)
-    User sender;
+    @OneToOne
+    @Column(name = "sender_id", nullable = false)
+    private User sender;
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_id")
-    User receiver;
+    @OneToOne
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private User receiver;
 
     @Size(min = 1, max = 320)
     @Column(name = "question_text", nullable = false, length = 320)
-    String questionText;
+    private String questionText;
 
-    AnswerType answerType;
+    private AnswerType answerType;
 
     @Size(max = 320)
     @Column(name = "answer_text", length = 320)
-    String answerText;
+    private String answerText;
 
     public enum AnswerType {
+        CHECKBOX("checkbox"),
         SINGLE_LINE_TEXT("single line text"),
         MULTILINE_TEXT("multiline text"),
         RADIO_BUTTON("radio button"),
-        CHECKBOX("checkbox"),
         COMBOBOX("combobox"),
         DATE("date");
 

@@ -1,5 +1,6 @@
 package com.softarex.communication.exception;
 
+// TODO: Why do we need to throw RuntimeException instead of usual Exception
 public class UserAlreadyExistException extends Exception {
     public UserAlreadyExistException() {
         super();

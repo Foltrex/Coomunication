@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String REGISTRATION_PAGE = "/registration";
-    private static final String MAIN_PAGE = "/conversations";
+    private static final String MAIN_PAGE = "/";
     private static final String LOGIN_PAGE = "/login";
 
     @Autowired
@@ -39,7 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(REGISTRATION_PAGE).not().fullyAuthenticated()
-                .antMatchers(MAIN_PAGE, "/").authenticated()
+                .antMatchers(MAIN_PAGE).authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()

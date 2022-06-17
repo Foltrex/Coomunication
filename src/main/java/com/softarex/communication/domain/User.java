@@ -9,30 +9,33 @@ import javax.validation.constraints.Size;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+// TODO: make final
+
 @Entity
 @Table(name = "users")
-@Getter
+@Data
+@NoArgsConstructor
 public class User implements Identifable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private final Long id;
+    private Long id;
 
     @Size(min = 1, max = 50)
-    private final String name;
+    private String name;
 
     @Size(min = 1, max = 50)
-    private final String surname;
+    private String surname;
 
     @Email
-    private final String email;
+    private String email;
 
     @Pattern(regexp = "^\\+375 \\((17|29|33|44)\\) [0-9]{3}-[0-9]{2}-[0-9]{2}$")
-    @Column(name = "phone_number", nullable = false, length = 20)
-    private final String phoneNumber;
+    @Column(name = "phone_number", nullable = false)
+    private String phoneNumber;
 
     @Size(min = 1, max = 60)
-    private final String password;
+    private String password;
 
     public static class Builder {
         private Long id;
@@ -86,12 +89,4 @@ public class User implements Identifable {
         password = builder.password;
     }
 
-    public User() {
-        id = 0L;
-        name = "";
-        surname = "";
-        email = "";
-        phoneNumber = "";
-        password = "";
-    }
 }

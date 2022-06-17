@@ -6,14 +6,17 @@ import com.softarex.communication.exception.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
 @Service
 @Slf4j
-@Transactional
+@Transactional(propagation = REQUIRES_NEW)
 public class UserService {
     private final UserDao userDao;
 
@@ -52,16 +55,8 @@ public class UserService {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
 
-        User userWithEncodedPassword = new User.Builder()
-                .id(user.getId())
-                .name(user.getName())
-                .surname(user.getSurname())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .password(encodedPassword)
-                .build();
-
-        userDao.save(userWithEncodedPassword);
+        user.setPassword(encodedPassword);
+        userDao.save(user);
     }
 
     public void save(User user) {

@@ -52,17 +52,9 @@ public class MessengerUserDetails implements UserDetails {
         return true;
     }
 
-    public String getName() {
-        return user.getName();
-    }
-
-    public String getSurname() {
-        return user.getSurname();
-    }
-
     public String getFullName() {
-        String name = this.getName();
-        String surname = this.getSurname();
+        String name = user.getName();
+        String surname = user.getSurname();
         return String.format("%s %s", name, surname);
     }
 }
