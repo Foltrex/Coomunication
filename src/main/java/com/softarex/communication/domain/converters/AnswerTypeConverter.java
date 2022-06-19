@@ -1,4 +1,4 @@
-package com.softarex.communication.domain;
+package com.softarex.communication.domain.converters;
 
 import com.softarex.communication.domain.Conversation;
 

@@ -23,7 +23,7 @@
           <div class="table-title">
             <div class="row">
               <div class="col-sm-6">
-                <h2 class="text-dark">Questions</h2>
+                <h2 class="text-dark">Your questions</h2>
               </div>
               <div class="col-sm-6">
                 <a href="#addQuestionModal" class="btn btn-success bg-primary" data-toggle="modal"><i class="fa-solid fa-plus"></i> <span>Add question</span></a>
@@ -41,20 +41,18 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="conversation : ${conversations}">
-              <div th:object="${conversation}">
-                <tr>
+                <tr th:each="conversation : ${conversations}">
+                  <div th:object="${conversation}">
                     <td><span th:text="*{receiver.email}"></span></td>
                     <td><span th:text="*{questionText}"></span></td>
-                    <td><span th:text="*{answerType}"></span></td>
+                    <td><span th:text="*{answerType.type}"></span></td>
                     <td><span th:text="*{answerText}"></span></td>
-                    <td>
-                      <a href="#editQuestionModal" class="edit" data-toggle="modal"><i class="fa-solid fa-trash-can" data-toggle="tooltip" title="Edit"></i></a>
-                      <a href="#deleteQuestionModal" class="delete" data-toggle="modal"><i class="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Delete"></i></a>
+                    <td class="icons-column">
+                      <a href="#editQuestionModal" class="edit" data-toggle="modal"><i class="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Edit"></i></a>
+                      <a href="#deleteQuestionModal" class="delete" data-toggle="modal"><i class="fa-solid fa-trash-can" data-toggle="tooltip" title="Delete"></i></a>
                     </td>
+                  </div>
                 </tr>
-              </div>
-            </th:block>
             </tbody>
           </table>
           <div class="d-flex justify-content-between">

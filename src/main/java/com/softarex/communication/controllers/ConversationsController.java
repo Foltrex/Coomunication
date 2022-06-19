@@ -8,20 +8,19 @@ import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Slf4j
 @Controller
 public class ConversationsController {
+    private static final String REDIRECT = "redirect:/";
     private static final String CONVERSATIONS_PAGE = "conversations";
 
-    private static final int DEFAULT_CONVERSATIONS_PAGE_SIZE = 10;
+    private static final Integer ALL_RECORDS_PER_PAGE = -1;
 
     private final ConversationService conversationService;
     private final UserService userService;
@@ -31,35 +30,33 @@ public class ConversationsController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
-    public String showHomePage(Model model) {
-        int pageNo = 1;
-        int pageSize = DEFAULT_CONVERSATIONS_PAGE_SIZE;
+//    @GetMapping("/")
+//    public String showHomePage(Model model) {
+//        int pageNo = 1;
+//        int pageSize = DEFAULT_CONVERSATIONS_PAGE_SIZE;
+//
+//        List<Conversation> paginatedConversations = conversationService.findPaginatedQuestionsForUser(pageNo, pageSize);
+//        log.info("conversations: " + paginatedConversations);
+//        model.addAttribute("conversations", paginatedConversations);
+//
+//        List<User> usersForModalForm = userService.findAll();
+//        model.addAttribute("users", usersForModalForm);
+//
+//        return CONVERSATIONS_PAGE;
+//    }
 
-        List<Conversation> paginatedConversations = conversationService.findPaginated(pageNo, pageSize);
+    @GetMapping(value = {"/conversations", "/"})
+    public String showPaginatedConversations(Model model, @RequestParam(defaultValue = "0") Integer pageNo,
+                                             @RequestParam(defaultValue = "10") Integer pageSize, Principal principal) throws AuthitificatedUserException {
+
+        User loggedUser = getLoggedUserInSender(principal);
+
+        List<Conversation> paginatedConversations = (pageSize == ALL_RECORDS_PER_PAGE)
+                ? conversationService.findQuestionsForUser(loggedUser)
+                : conversationService.findPaginatedQuestionsForUser(loggedUser, pageNo, pageSize);
+
+        log.info("conversations: " + paginatedConversations);
         model.addAttribute("conversations", paginatedConversations);
-        model.addAttribute("conversation", new Conversation());
-
-        List<User> usersForModalForm = userService.findAll();
-        model.addAttribute("users", usersForModalForm);
-
-        return CONVERSATIONS_PAGE;
-    }
-
-    @GetMapping(value = {"/conversations", "conversations/{pageNo}/{pageSize}"})
-    public String showPaginatedConversations(Model model, @PathVariable Optional<Integer> pageNoOptional,
-                                                         @PathVariable Optional<Integer> pageSizeOptional) {
-
-        int firstPageNumber = 1;
-        int pageNo = pageNoOptional.orElse(firstPageNumber);
-        int pageSize = pageSizeOptional.orElse(DEFAULT_CONVERSATIONS_PAGE_SIZE);
-
-        log.info("PageNo: " + pageNo);
-        log.info("PageSize: " + pageSize);
-
-        List<Conversation> paginatedConversations = conversationService.findPaginated(pageNo, pageSize);
-        model.addAttribute("conversations", paginatedConversations);
-        model.addAttribute("conversation", new Conversation());
 
         List<User> usersForModalForm = userService.findAll();
         model.addAttribute("users", usersForModalForm);
@@ -68,39 +65,59 @@ public class ConversationsController {
     }
 
     @PostMapping("/conversations")
-    public String addQuestion(@Valid @ModelAttribute("conversation") Conversation conversationWithoutSettedSender,
-                              BindingResult bindingResult, Model model, Principal principal) {
+    public String addQuestion(@RequestParam Map<String,String> allParams, Model model, Principal principal) throws AuthitificatedUserException {
 
+        Conversation conversation = null;
         try {
-            if (!bindingResult.hasErrors()) {
-                setLoggedUserInSender(conversationWithoutSettedSender, principal);
+            conversation = extractConversationFromRequest(allParams, principal);
+            log.info("Conversation getted from request: " + conversation);
 
-                conversationService.save(conversationWithoutSettedSender);
-
-            } else {
-                model.addAttribute("conversation", conversationWithoutSettedSender);
-            }
+            conversationService.save(conversation);
         } catch (AuthitificatedUserException e) {
             log.warn(e.getMessage());
         }
 
-        int pageNo = 1;
-        int pageSize = DEFAULT_CONVERSATIONS_PAGE_SIZE;
-        List<Conversation> paginatedConversations = conversationService.findPaginated(pageNo, pageSize);
+        User loggedUser = getLoggedUserInSender(principal);
+        List<Conversation> paginatedConversations = conversationService.findQuestionsForUser(loggedUser);
         model.addAttribute("conversations", paginatedConversations);
 
         List<User> usersForModalForm = userService.findAll();
         model.addAttribute("users", usersForModalForm);
 
 
-        log.info("Conversation with sender: " + conversationWithoutSettedSender.toString());
-        return CONVERSATIONS_PAGE;
+        log.info("Conversation with sender: " + conversation);
+        return REDIRECT + CONVERSATIONS_PAGE;
     }
 
-    private void setLoggedUserInSender(Conversation conversationWithoutSettedSender, Principal principal) throws AuthitificatedUserException {
-        log.info("Logged user's username: " + principal.getName());
 
+    private Conversation extractConversationFromRequest(@RequestParam Map<String,String> allParams, Principal principal) throws AuthitificatedUserException {
+        User sender = getLoggedUserInSender(principal);
+
+        Long receiverId = Long.valueOf(allParams.get("receiverId"));
+        User receiver = userService.findById(receiverId).orElseThrow(IllegalArgumentException::new);
+
+        String question = allParams.get("questionText");
+
+        String answerTypeName = allParams.get("answerTypeName");
+        Conversation.AnswerType answerType = Conversation.AnswerType.valueOfTypeName(answerTypeName);
+
+        String answer = allParams.get("answerText");
+        answer = answer.replaceAll("\n", "|");
+
+        Conversation conversation = new Conversation.Builder()
+                .sender(sender)
+                .receiver(receiver)
+                .questionText(question)
+                .answerType(answerType)
+                .answerText(answer)
+                .build();
+
+        return conversation;
+    }
+
+    private User getLoggedUserInSender(Principal principal) throws AuthitificatedUserException {
+        log.info("Logged user's username: " + principal.getName());
         User sender = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
-        conversationWithoutSettedSender.setSender(sender);
+        return sender;
     }
 }

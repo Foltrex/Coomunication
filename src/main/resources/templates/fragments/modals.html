@@ -24,31 +24,27 @@
     <div id="addQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form th:action="@{/conversations/new}" method="post" th:object="${conversation}">
+                <form th:action="@{/conversations}" method="post">
                     <div class="modal-header bg-light">
                         <h4 class="modal-title">Add question</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}">
-                            <p th:each="err : ${#fields.allErrors()}" th:text="${err}"></p>
-                        </div>
 
                         <div class="form-group">
                             <label>For user</label>
-                            <select id="ddUser" name="user" th:field="*{receiver}" class="form-select" aria-label="Default select example">
-                                <option th:each="user : ${users}"
-                                        th:value="${user}" th:text="${user.email}"></option>
+                            <select id="ddUser" name="receiverId" class="form-select" aria-label="Default select example">
+                                <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.email}"></option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Question</label>
-                            <input type="text" th:field="*{questionText}" class="form-control" required>
+                            <input type="text" name="questionText" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label>Answer type</label>
 <!--                            option -->
-                            <select th:field="*{answerType}" id="ddAnswerType" name="answerType" class="form-select" aria-label="Default select example">
+                            <select name="answerTypeName" id="ddAnswerType" class="form-select" aria-label="Default select example">
                                 <option th:each="answerType : ${T(com.softarex.communication.domain.Conversation.AnswerType).values()}"
                                         th:value="${answerType.type}" th:text="${answerType.type}"></option>
                             </select>
@@ -56,7 +52,7 @@
                         <!-- one of answer type must be lower -->
                         <div id="answer-form" class="form-group">
                             <label>Options</label>
-                            <textarea th:field="*{answerText}" id="answer" class="form-control"></textarea>
+                            <textarea name="answerText" id="answer" class="form-control"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer bg-light">

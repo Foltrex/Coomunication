@@ -83,12 +83,11 @@ table.table td a {
 table.table td a:hover {
 	color: #2196F3;
 }
-table.table td a.edit {
-	color: #FFC107;
+
+.icons-column {
+    text-align: right;
 }
-table.table td a.delete {
-	color: #F44336;
-}
+
 table.table td i {
 	font-size: 19px;
 }
