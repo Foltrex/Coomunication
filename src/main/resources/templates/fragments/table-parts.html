@@ -20,34 +20,49 @@
 <body>
 
 <div th:fragment="pagination" >
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous</span>
-                </a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="/conversations?pageNo" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <form th:action="@{/conversations}" method="get">
+        <input type="hidden" name="pageSize" th:value="${pageSize}">
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item">
+                    <button type="submit" name="pageNo" th:value="${pageNo - 1}" class="btn btn-outline-secondary border-white shadow-sm">
+                        <span>&laquo;</span>
+                    </button>
+                </li>
+                <li th:each="i : ${#numbers.sequence(1, pageAmounts)}" >
+                    <button type="submit" name="pageNo" th:value="${i}" class="btn btn-outline-secondary border-white shadow-sm">
+                        <span th:text="${i}"></span>
+                    </button>
+                </li>
+                <li class="page-item">
+                    <button type="submit" name="pageNo" th:value="${pageNo + 1}" class="btn btn-outline-secondary border-white shadow-sm">
+                        <span>&raquo;</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </form>
 </div>
 
 <div th:fragment="rowsPerPage">
     <form th:action="@{/conversations}" method="get">
-        <select name="pageSize" class="browser-default custom-select">
-            <option selected="">Open this select menu</option>
-            <option value="-1">All</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
+        <select onchange="this.form.submit()" name="pageSize" class="browser-default custom-select">
+            <div th:if="${pageSize} == -1">
+                <option selected value="-1">All</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+            </div>
+            <div th:if="${pageSize} == 5">
+                <option value="-1">All</option>
+                <option selected value="5">5</option>
+                <option value="10">10</option>
+            </div>
+            <div th:if="${pageSize} == 10">
+                <option value="-1">All</option>
+                <option value="5">5</option>
+                <option selected value="10">10</option>
+            </div>
         </select>
     </form>
 </div>

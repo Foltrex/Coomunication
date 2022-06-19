@@ -11,6 +11,8 @@ import java.util.List;
 
 @Repository
 public interface ConversationDao extends JpaRepository<Conversation, Long> {
+    long countBySender(User sender);
+
     List<Conversation> findByReceiverIsNot(User receiver);
 
     List<Conversation> findBySenderIsNot(User sender);

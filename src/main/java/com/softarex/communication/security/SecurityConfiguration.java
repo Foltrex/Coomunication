@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -18,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String REGISTRATION_PAGE = "/registration";
-    private static final String MAIN_PAGE = "/";
+    private static final String MAIN_PAGE = "/conversations";
     private static final String LOGIN_PAGE = "/login";
 
     @Autowired
@@ -39,7 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(REGISTRATION_PAGE).not().fullyAuthenticated()
-                .antMatchers(MAIN_PAGE).authenticated()
+                .antMatchers(MAIN_PAGE, "/").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
@@ -54,8 +56,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .key("AbcdefghiJklmNoPqRstUvXyz")
                     .and()
                 .logout()
-                    .logoutSuccessUrl(LOGIN_PAGE).permitAll();
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl(LOGIN_PAGE).permitAll()
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID");
     }
-
-
 }

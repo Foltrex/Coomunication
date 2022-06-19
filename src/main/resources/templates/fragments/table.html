@@ -17,7 +17,7 @@
 </head>
 <body>
   <div th:fragment="question-table" >
-    <div class="container-xl w-75 mt-5 mx-auto bg-white border rounded-lg">
+    <div class="container-xl w-75 my-5 mx-auto bg-white border rounded-lg">
       <div class="table-responsive">
         <div class="table-wrapper">
           <div class="table-title">
@@ -48,7 +48,8 @@
                     <td><span th:text="*{answerType.type}"></span></td>
                     <td><span th:text="*{answerText}"></span></td>
                     <td class="icons-column">
-                      <a href="#editQuestionModal" class="edit" data-toggle="modal"><i class="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Edit"></i></a>
+                      <a th:href="@{/conversations/edit/(id=*{id})}"
+                         class="editModal"><i class="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Edit"></i></a>
                       <a href="#deleteQuestionModal" class="delete" data-toggle="modal"><i class="fa-solid fa-trash-can" data-toggle="tooltip" title="Delete"></i></a>
                     </td>
                   </div>
@@ -56,12 +57,9 @@
             </tbody>
           </table>
           <div class="d-flex justify-content-between">
-            <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-
-
-<!--page navigation-->
-
+            <div class="hint-text"><p><span th:text="${pageSize * pageNo + 1}"></span>-<span th:text="${pageSize * pageNo} + ${#lists.size(conversations)}"></span> of <span th:text="${conversationAmount}"></span></p></div>
             <div th:replace="fragments/table-parts.html :: pagination"></div>
+            <div th:replace="fragments/table-parts.html :: rowsPerPage"></div>
           </div>
         </div>
       </div>

@@ -47,7 +47,7 @@ public class ConversationsController {
 
     @GetMapping(value = {"/conversations", "/"})
     public String showPaginatedConversations(Model model, @RequestParam(defaultValue = "0") Integer pageNo,
-                                             @RequestParam(defaultValue = "10") Integer pageSize, Principal principal) throws AuthitificatedUserException {
+                                             @RequestParam(defaultValue = "-1") Integer pageSize, Principal principal) throws AuthitificatedUserException {
 
         User loggedUser = getLoggedUserInSender(principal);
 
@@ -55,17 +55,30 @@ public class ConversationsController {
                 ? conversationService.findQuestionsForUser(loggedUser)
                 : conversationService.findPaginatedQuestionsForUser(loggedUser, pageNo, pageSize);
 
-        log.info("conversations: " + paginatedConversations);
         model.addAttribute("conversations", paginatedConversations);
 
         List<User> usersForModalForm = userService.findAll();
         model.addAttribute("users", usersForModalForm);
 
+        long totalConversationAmount = conversationService.countForUser(loggedUser);
+        setAttributesForPagination(model, pageNo, pageSize, totalConversationAmount);
+
         return CONVERSATIONS_PAGE;
     }
 
-    @PostMapping("/conversations")
-    public String addQuestion(@RequestParam Map<String,String> allParams, Model model, Principal principal) throws AuthitificatedUserException {
+    @GetMapping(value = "/conversations/edit")
+    @ResponseBody
+    public Conversation findQuestion(Integer id) {
+        return conversationService.findById(Long.valueOf(id)).orElseThrow(IllegalArgumentException::new);
+    }
+
+    @PostMapping
+    public String saveQuestion(@RequestParam Map<String, String> allParams, Model model) {
+        return "";
+    }
+
+    @PostMapping("/conversations/new")
+    public String addQuestion(@RequestParam Map<String, String> allParams, Model model, Principal principal) throws AuthitificatedUserException {
 
         Conversation conversation = null;
         try {
@@ -88,6 +101,7 @@ public class ConversationsController {
         log.info("Conversation with sender: " + conversation);
         return REDIRECT + CONVERSATIONS_PAGE;
     }
+
 
 
     private Conversation extractConversationFromRequest(@RequestParam Map<String,String> allParams, Principal principal) throws AuthitificatedUserException {
@@ -119,5 +133,18 @@ public class ConversationsController {
         log.info("Logged user's username: " + principal.getName());
         User sender = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
         return sender;
+    }
+
+    private void setAttributesForPagination(Model model, int pageNo, int pageSize, long totalConversationAmount) {
+        long pageAmount = 1;
+        if (pageSize != ALL_RECORDS_PER_PAGE) {
+            pageAmount = (long) Math.ceil((double) totalConversationAmount / pageSize);
+        }
+
+        model.addAttribute("pageNo", pageNo);
+        model.addAttribute("pageSize", pageSize);
+
+        model.addAttribute("conversationAmount", totalConversationAmount);
+        model.addAttribute("pageAmounts", pageAmount);
     }
 }

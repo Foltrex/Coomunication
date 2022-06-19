@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
@@ -28,6 +29,9 @@ public class ConversationService {
         this.conversationDao = conversationDao;
     }
 
+    public Optional<Conversation> findById(Long id) {
+        return conversationDao.findById(id);
+    }
 
     public List<Conversation> findQuestionsForUser(User user) {
         List<Conversation> conversations = conversationDao.findByReceiverIsNot(user);
@@ -35,8 +39,8 @@ public class ConversationService {
         return conversations;
     }
 
-    public long count() {
-        return conversationDao.count();
+    public long countForUser(User user) {
+        return conversationDao.countBySender(user);
     }
 
     public void delete(Conversation conversation) {

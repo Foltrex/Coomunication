@@ -19,4 +19,10 @@ $(document).ready(function(){
                 break;
         }
     });
+
+    $(".editModal").click(function(event) {
+        event.preventDefault();
+
+        $("#editQuestionModal").modal()
+    });
 });
