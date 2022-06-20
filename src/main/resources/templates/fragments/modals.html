@@ -73,7 +73,8 @@
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">
-
+                        <input id="id" type="hidden" name="id">
+                        <input id="senderId" type="hidden" name="sender_id">
                         <div class="form-group d-flex">
                             <label class="w-25">For user</label>
                             <select id="ddEditUser" name="receiverId" class="form-control select-input w-75" aria-label="Default select example">
@@ -82,7 +83,7 @@
                         </div>
                         <div class="form-group d-flex">
                             <label class="w-25">Question</label>
-                            <input type="text" name="questionText" class="form-control w-75" required>
+                            <input id="questionText" type="text" name="questionText" class="form-control w-75" required>
                         </div>
                         <div class="form-group d-flex">
                             <label class="w-25">Answer type</label>
@@ -98,7 +99,7 @@
                     </div>
                     <div class="modal-footer bg-light">
                         <input type="button" class="btn border rounded-lg btn-default bg-white" data-dismiss="modal" value="Cancel">
-                        <input type="submit" class="btn border rounded-lg btn-success bg-primary" value="Add">
+                        <input type="submit" class="btn border rounded-lg btn-success bg-primary" value="Save">
                     </div>
                 </form>
             </div>
@@ -112,7 +113,7 @@
             <div class="modal-content">
                 <form>
                     <div class="modal-header">
-                        <h4 class="modal-title">Delete Employee</h4>
+                        <h4 class="modal-title">Delete Question</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">

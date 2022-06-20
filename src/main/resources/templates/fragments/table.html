@@ -46,7 +46,11 @@
                     <td><span th:text="*{receiver.email}"></span></td>
                     <td><span th:text="*{questionText}"></span></td>
                     <td><span th:text="*{answerType.type}"></span></td>
-                    <td><span th:text="*{answerText}"></span></td>
+                    <td>
+                      <div th:if="${not #strings.contains(conversation.answerText,'|')}">
+                        <span th:text="*{answerText}"></span>
+                      </div>
+                    </td>
                     <td class="icons-column">
                       <a th:href="@{/conversations/edit/(id=*{id})}"
                          class="editModal"><i class="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Edit"></i></a>

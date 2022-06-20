@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -20,6 +21,7 @@ public class ConversationsController {
     private static final String REDIRECT = "redirect:/";
     private static final String CONVERSATIONS_PAGE = "conversations";
 
+    private static final String ANSWER_TEXT_SEPARATOR = "|";
     private static final Integer ALL_RECORDS_PER_PAGE = -1;
 
     private final ConversationService conversationService;
@@ -29,21 +31,6 @@ public class ConversationsController {
         this.conversationService = conversationService;
         this.userService = userService;
     }
-
-//    @GetMapping("/")
-//    public String showHomePage(Model model) {
-//        int pageNo = 1;
-//        int pageSize = DEFAULT_CONVERSATIONS_PAGE_SIZE;
-//
-//        List<Conversation> paginatedConversations = conversationService.findPaginatedQuestionsForUser(pageNo, pageSize);
-//        log.info("conversations: " + paginatedConversations);
-//        model.addAttribute("conversations", paginatedConversations);
-//
-//        List<User> usersForModalForm = userService.findAll();
-//        model.addAttribute("users", usersForModalForm);
-//
-//        return CONVERSATIONS_PAGE;
-//    }
 
     @GetMapping(value = {"/conversations", "/"})
     public String showPaginatedConversations(Model model, @RequestParam(defaultValue = "0") Integer pageNo,

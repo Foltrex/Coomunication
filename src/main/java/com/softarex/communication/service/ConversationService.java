@@ -21,7 +21,6 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 @Slf4j
 @Transactional(propagation = REQUIRES_NEW)
 public class ConversationService {
-    private static final String ANSWER_TEXT_SEPARATOR = "|";
 
     private final ConversationDao conversationDao;
 
@@ -34,9 +33,7 @@ public class ConversationService {
     }
 
     public List<Conversation> findQuestionsForUser(User user) {
-        List<Conversation> conversations = conversationDao.findByReceiverIsNot(user);
-        conversations = removeAnswerTextInConversationsWithSeparatorInAnswer(conversations, ANSWER_TEXT_SEPARATOR);
-        return conversations;
+        return conversationDao.findByReceiverIsNot(user);
     }
 
     public long countForUser(User user) {
@@ -59,23 +56,9 @@ public class ConversationService {
     public List<Conversation> findPaginatedQuestionsForUser(User user, int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Conversation> pageResult = conversationDao.findByReceiverIsNot(user, paging);
-        List<Conversation> paginatedConversations = pageResult.hasContent() ? pageResult.getContent()
-                : Collections.emptyList();
 
-        paginatedConversations = removeAnswerTextInConversationsWithSeparatorInAnswer(paginatedConversations, ANSWER_TEXT_SEPARATOR);
-        return paginatedConversations;
+        return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
     }
 
 
-    private List<Conversation> removeAnswerTextInConversationsWithSeparatorInAnswer(List<Conversation> conversations,
-                                                                                    String separator) {
-        conversations = conversations.stream()
-                .peek(c -> {
-                    if (c.getAnswerText().contains(separator)) {
-                        c.setAnswerText("");
-                    }
-                }).collect(Collectors.toList());
-
-        return conversations;
-    }
 }
