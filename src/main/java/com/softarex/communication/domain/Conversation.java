@@ -24,11 +24,11 @@ public class Conversation implements Identifable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 

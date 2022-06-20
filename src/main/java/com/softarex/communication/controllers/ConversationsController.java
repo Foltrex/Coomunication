@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -40,11 +39,11 @@ public class ConversationsController {
     public String showPaginatedConversations(Model model, @RequestParam(defaultValue = "0") Integer pageNo,
                                              @RequestParam(defaultValue = "-1") Integer pageSize, Principal principal) throws AuthitificatedUserException {
 
-        User loggedUser = getLoggedUserInSender(principal);
+        User loggedUser = getLoggedUser(principal);
 
         List<Conversation> paginatedConversations = (pageSize == ALL_RECORDS_PER_PAGE)
-                ? conversationService.findQuestionsForUser(loggedUser)
-                : conversationService.findPaginatedQuestionsForUser(loggedUser, pageNo, pageSize);
+                ? conversationService.findQuestionsFromUser(loggedUser)
+                : conversationService.findPaginatedQuestionsFromUser(loggedUser, pageNo, pageSize);
 
         model.addAttribute("conversations", paginatedConversations);
 
@@ -81,8 +80,8 @@ public class ConversationsController {
             log.warn(e.getMessage());
         }
 
-        User loggedUser = getLoggedUserInSender(principal);
-        List<Conversation> paginatedConversations = conversationService.findQuestionsForUser(loggedUser);
+        User loggedUser = getLoggedUser(principal);
+        List<Conversation> paginatedConversations = conversationService.findQuestionsFromUser(loggedUser);
         model.addAttribute("conversations", paginatedConversations);
 
         List<User> usersForModalForm = userService.findAll();
@@ -96,7 +95,7 @@ public class ConversationsController {
 
 
     private Conversation extractConversationFromRequest(@RequestParam Map<String,String> allParams, Principal principal) throws AuthitificatedUserException {
-        User sender = getLoggedUserInSender(principal);
+        User sender = getLoggedUser(principal);
 
         Long receiverId = Long.valueOf(allParams.get("receiverId"));
         User receiver = userService.findById(receiverId).orElseThrow(IllegalArgumentException::new);
@@ -121,7 +120,7 @@ public class ConversationsController {
         return conversation;
     }
 
-    private User getLoggedUserInSender(Principal principal) throws AuthitificatedUserException {
+    private User getLoggedUser(Principal principal) throws AuthitificatedUserException {
         log.info("Logged user's username: " + principal.getName());
         User sender = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
         return sender;

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
@@ -32,7 +31,7 @@ public class ConversationService {
         return conversationDao.findById(id);
     }
 
-    public List<Conversation> findQuestionsForUser(User user) {
+    public List<Conversation> findQuestionsFromUser(User user) {
         return conversationDao.findByReceiverIsNot(user);
     }
 
@@ -53,7 +52,7 @@ public class ConversationService {
         conversationDao.save(conversation);
     }
 
-    public List<Conversation> findPaginatedQuestionsForUser(User user, int pageNo, int pageSize) {
+    public List<Conversation> findPaginatedQuestionsFromUser(User user, int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Conversation> pageResult = conversationDao.findByReceiverIsNot(user, paging);
 
