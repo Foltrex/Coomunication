@@ -1,8 +1,10 @@
 package com.softarex.communication.controllers;
 
+import com.softarex.communication.domain.Answer;
 import com.softarex.communication.domain.Conversation;
 import com.softarex.communication.domain.User;
 import com.softarex.communication.exception.AuthitificatedUserException;
+import com.softarex.communication.service.AnswerService;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +28,12 @@ public class ConversationsController {
 
     private final ConversationService conversationService;
     private final UserService userService;
+    private final AnswerService answerService;
 
-    public ConversationsController(ConversationService conversationService, UserService userService) {
+    public ConversationsController(ConversationService conversationService, UserService userService, AnswerService answerService) {
         this.conversationService = conversationService;
         this.userService = userService;
+        this.answerService = answerService;
     }
 
     @GetMapping(value = {"/conversations", "/"})
@@ -100,17 +104,18 @@ public class ConversationsController {
         String question = allParams.get("questionText");
 
         String answerTypeName = allParams.get("answerTypeName");
-        Conversation.AnswerType answerType = Conversation.AnswerType.valueOfTypeName(answerTypeName);
+        Answer.Type answerType = Answer.Type.valueOfTypeName(answerTypeName);
 
-        String answer = allParams.get("answerText");
-        answer = answer.replaceAll("\n", "|");
+        String answerText = allParams.get("answerText");
+        answerText = answerText.replaceAll("\n", "|");
+        Answer answer = new Answer(null, answerType, answerText);
+        answerService.save(answer);
 
         Conversation conversation = new Conversation.Builder()
                 .sender(sender)
                 .receiver(receiver)
                 .questionText(question)
-                .answerType(answerType)
-                .answerText(answer)
+                .answer(answer)
                 .build();
 
         return conversation;

@@ -44,7 +44,7 @@
                         <div class="form-group d-flex">
                             <label class="w-25">Answer type</label>
                             <select name="answerTypeName" id="ddAnswerType" class="form-control select-input w-75" aria-label="Default select example">
-                                <option th:each="answerType : ${T(com.softarex.communication.domain.Conversation.AnswerType).values()}"
+                                <option th:each="answerType : ${T(com.softarex.communication.domain.Answer.Type).values()}"
                                         th:value="${answerType.type}" th:text="${answerType.type}"></option>
                             </select>
                         </div>
@@ -88,7 +88,7 @@
                         <div class="form-group d-flex">
                             <label class="w-25">Answer type</label>
                             <select name="answerTypeName" id="ddEditAnswerType" class="form-control select-input w-75" aria-label="Default select example">
-                                <option th:each="answerType : ${T(com.softarex.communication.domain.Conversation.AnswerType).values()}"
+                                <option th:each="answerType : ${T(com.softarex.communication.domain.Answer.Type).values()}"
                                         th:value="${answerType.type}" th:text="${answerType.type}"></option>
                             </select>
                         </div>

@@ -45,10 +45,10 @@
                   <div th:object="${conversation}">
                     <td><span th:text="*{receiver.email}"></span></td>
                     <td><span th:text="*{questionText}"></span></td>
-                    <td><span th:text="*{answerType.type}"></span></td>
+                    <td><span th:text="*{answer.type.type}"></span></td>
                     <td>
-                      <div th:if="${not #strings.contains(conversation.answerText,'|')}">
-                        <span th:text="*{answerText}"></span>
+                      <div th:if="${not #strings.contains(conversation.answer.text,'|')}">
+                        <span th:text="*{answer.text}"></span>
                       </div>
                     </td>
                     <td class="icons-column">

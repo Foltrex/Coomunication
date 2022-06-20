@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -35,12 +36,9 @@ public class Conversation implements Identifable {
     @Column(name = "question_text", nullable = false, length = 320)
     private String questionText;
 
-    @Column(name = "answer_type")
-    private AnswerType answerType;
-
-    @Size(max = 320)
-    @Column(name = "answer_text", length = 320)
-    private String answerText;
+    @OneToOne
+    @JoinColumn(name = "answer_id")
+    private Answer answer;
 
 
     public static class Builder {
@@ -48,8 +46,7 @@ public class Conversation implements Identifable {
         private User sender;
         private User receiver;
         private String questionText;
-        private AnswerType answerType;
-        private String answerText;
+        private Answer answer;
 
         public Builder id(Long val) {
             id = val;
@@ -71,13 +68,8 @@ public class Conversation implements Identifable {
             return this;
         }
 
-        public Builder answerType(AnswerType val) {
-            answerType = val;
-            return this;
-        }
-
-        public Builder answerText(String val) {
-            answerText = val;
+        public Builder answer(Answer val) {
+            answer = val;
             return this;
         }
 
@@ -87,43 +79,11 @@ public class Conversation implements Identifable {
     }
 
 
-    public enum AnswerType {
-        CHECKBOX("checkbox"),
-        SINGLE_LINE_TEXT("single line text"),
-        MULTILINE_TEXT("multiline text"),
-        RADIO_BUTTON("radio button"),
-        COMBOBOX("combobox"),
-        DATE("date");
-
-        private final String type;
-
-        private static final Map<String, AnswerType> ELEMENTS = new HashMap<>();
-        static {
-            for (AnswerType answerType: AnswerType.values()) {
-                ELEMENTS.put(answerType.type, answerType);
-            }
-        }
-
-        AnswerType(String type) {
-            this.type = type;
-        }
-
-        public static AnswerType valueOfTypeName(String typeName) {
-            return ELEMENTS.get(typeName);
-        }
-
-        public String getType() {
-            return type;
-        }
-    }
-
-
     private Conversation(Builder builder) {
         id = builder.id;
         sender = builder.sender;
         receiver = builder.receiver;
         questionText = builder.questionText;
-        answerType = builder.answerType;
-        answerText = builder.answerText;
+        answer = builder.answer;
     }
 }
