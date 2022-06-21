@@ -16,4 +16,8 @@ public interface ConversationDao extends JpaRepository<Conversation, Long> {
     List<Conversation> findBySender(User sender);
 
     Page<Conversation> findBySender(User sender, Pageable pageable);
+
+    List<Conversation> findByReceiver(User user);
+
+    Page<Conversation> findByReceiver(User user, Pageable pageable);
 }

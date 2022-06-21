@@ -24,7 +24,7 @@
     <div id="addQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form th:action="@{/conversations/new}" method="post">
+                <form th:action="@{/questions/new}" method="post">
                     <div class="modal-header bg-light">
                         <h4 class="modal-title">Add question</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -67,7 +67,7 @@
     <div id="editQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" th:action="@{/conversations/save}">
+                <form method="post" th:action="@{/questions/save}">
                     <div class="modal-header bg-light">
                         <h4 class="modal-title">Edit question</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -111,7 +111,7 @@
     <div id="deleteQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" th:action="@{/conversations/delete}">
+                <form method="post" th:action="@{/questions/delete}">
                     <input type="hidden" name="conversationId" id="conversationId">
 
                     <div class="modal-header">

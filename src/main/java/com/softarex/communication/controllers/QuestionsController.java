@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Controller
-public class ConversationsController {
+public class QuestionsController {
     private static final String REDIRECT = "redirect:/";
-    private static final String CONVERSATIONS_PAGE = "conversations";
+    private static final String QUESTIONS_PAGE = "questions";
 
     private static final String ANSWER_TEXT_SEPARATOR = "|";
     private static final Integer ALL_RECORDS_PER_PAGE = -1;
@@ -30,14 +29,14 @@ public class ConversationsController {
     private final UserService userService;
     private final AnswerService answerService;
 
-    public ConversationsController(ConversationService conversationService, UserService userService, AnswerService answerService) {
+    public QuestionsController(ConversationService conversationService, UserService userService, AnswerService answerService) {
         this.conversationService = conversationService;
         this.userService = userService;
         this.answerService = answerService;
     }
 
-    @GetMapping(value = {"/conversations", "/"})
-    public String showPaginatedConversations(Model model, @RequestParam(defaultValue = "0") Integer pageNo,
+    @GetMapping(value = {"/questions", "/"})
+    public String showPaginatedQuestions(Model model, @RequestParam(defaultValue = "0") Integer pageNo,
                                              @RequestParam(defaultValue = "-1") Integer pageSize, Principal principal) throws AuthitificatedUserException {
 
         User loggedUser = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
@@ -54,16 +53,16 @@ public class ConversationsController {
         long totalConversationAmount = conversationService.countForUser(loggedUser);
         setAttributesForPagination(model, pageNo, pageSize, totalConversationAmount);
 
-        return CONVERSATIONS_PAGE;
+        return QUESTIONS_PAGE;
     }
 
-    @GetMapping(value = {"/conversations/edit", "/conversations/delete"})
+    @GetMapping(value = {"/questions/edit", "/questions/delete"})
     @ResponseBody
-    public Conversation findQuestion(Integer id) {
-        return conversationService.findById(Long.valueOf(id)).orElseThrow(IllegalArgumentException::new);
+    public Conversation findQuestion(Long id) {
+        return conversationService.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 
-    @PostMapping(value = {"/conversations/new", "/conversations/save"})
+    @PostMapping(value = {"/questions/new", "/questions/save"})
     public String addQuestion(@RequestParam Map<String, String> allParams, Model model, Principal principal) {
 
         Conversation conversation = null;
@@ -76,17 +75,17 @@ public class ConversationsController {
             log.warn(e.getMessage());
         }
 
-        return REDIRECT + CONVERSATIONS_PAGE;
+        return REDIRECT + QUESTIONS_PAGE;
     }
 
-    @PostMapping("/conversations/delete")
+    @PostMapping("/questions/delete")
     public String deleteQuestion(@RequestParam Long conversationId, Model model, Principal principal) {
         Conversation deletedConversation = conversationService.findById(conversationId)
                 .orElseThrow(IllegalArgumentException::new);
 
         conversationService.delete(deletedConversation);
 
-        return REDIRECT + CONVERSATIONS_PAGE;
+        return REDIRECT + QUESTIONS_PAGE;
     }
 
 

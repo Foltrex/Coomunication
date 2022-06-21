@@ -20,7 +20,7 @@
 <body>
 
 <div th:fragment="pagination" >
-    <form th:action="@{/conversations}" method="get">
+    <form th:action="@{/questions}" method="get">
         <input type="hidden" name="pageSize" th:value="${pageSize}">
 
         <nav aria-label="Page navigation example">
@@ -46,7 +46,7 @@
 </div>
 
 <div th:fragment="rowsPerPage">
-    <form th:action="@{/conversations}" method="get">
+    <form th:action="@{/questions}" method="get">
         <select onchange="this.form.submit()" name="pageSize" class="browser-default custom-select">
             <div th:if="${pageSize} == -1">
                 <option selected value="-1">All</option>

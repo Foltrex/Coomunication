@@ -1,7 +1,11 @@
 div#navbarNavDropdown {
-    margin-left: 60%;
+    margin-left: 50%;
 }
 
 a.navbar-brand {
-    margin-left: 5%;
+    margin-left: 10%;
+}
+
+.navbar {
+    font-size:15px;
 }

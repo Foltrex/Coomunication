@@ -217,3 +217,8 @@ table.table .avatar {
 .modal form label {
 	font-weight: normal;
 }
+
+.btn-submit {
+    width: 35%;
+    font-size: 17px;
+}

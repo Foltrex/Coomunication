@@ -35,6 +35,24 @@ public class ConversationService {
         return conversationDao.findBySender(user);
     }
 
+    public List<Conversation> findPaginatedQuestionsFromUser(User user, int pageNo, int pageSize) {
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        Page<Conversation> pageResult = conversationDao.findBySender(user, paging);
+
+        return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
+    }
+
+    public List<Conversation> findAnswersFromUser(User user) {
+        return conversationDao.findByReceiver(user);
+    }
+
+    public List<Conversation> findPaginatedAnswersFromUser(User user, int pageNo, int pageSize) {
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        Page<Conversation> pageResult = conversationDao.findByReceiver(user, paging);
+
+        return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
+    }
+
     public long countForUser(User user) {
         return conversationDao.countBySender(user);
     }
@@ -51,13 +69,5 @@ public class ConversationService {
 
         conversationDao.save(conversation);
     }
-
-    public List<Conversation> findPaginatedQuestionsFromUser(User user, int pageNo, int pageSize) {
-        Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Conversation> pageResult = conversationDao.findBySender(user, paging);
-
-        return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
-    }
-
 
 }

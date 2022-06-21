@@ -30,7 +30,7 @@ import java.util.Optional;
 public class UserController {
     private static final String REDIRECT = "redirect:/";
 
-    private static final String MAIN_PAGE = "conversations";
+    private static final String MAIN_PAGE = "questions";
     private static final String REGISTRATION_PAGE = "registration";
     private static final String PROFILE_PAGE = "account";
     private static final String DELETE_ACCOUNT_PAGE = "delete-account";
