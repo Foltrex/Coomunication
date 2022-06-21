@@ -1,6 +1,6 @@
 <div th:fragment="navbar" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-        <a class="navbar-brand" href="./coversations">
+        <a class="navbar-brand" th:href="@{/conversations}">
             <img th:src="@{/images/logo.png}" alt="Logo" style="width:40px;">
         </a>
 
@@ -10,7 +10,7 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Your questions<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" th:href="@{/conversations}">Your questions<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Answer the question</a>
@@ -21,8 +21,8 @@
 
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Edit Profile</a>
-                        <a class="dropdown-item" href="#">Delete Profile</a>
+                        <a class="dropdown-item" th:href="@{/user/edit}">Edit Profile</a>
+                        <a class="dropdown-item" th:href="@{/user/delete}">Delete Profile</a>
 
                         <form th:action="@{/logout}" method="post">
                             <button class="dropdown-item" type="submit">Log Out</button>

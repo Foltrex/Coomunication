@@ -2,9 +2,10 @@ package com.softarex.communication.service;
 
 import com.softarex.communication.dao.UserDao;
 import com.softarex.communication.domain.User;
-import com.softarex.communication.exception.UserAlreadyExistException;
+import com.softarex.communication.exception.UserServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +19,9 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 @Slf4j
 @Transactional(propagation = REQUIRES_NEW)
 public class UserService {
-    private final UserDao userDao;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    private final UserDao userDao;
 
     public UserService(UserDao userDao) {
         this.userDao = userDao;
@@ -33,8 +35,18 @@ public class UserService {
         return userDao.findByEmail(email);
     }
 
+    public Optional<User> findByEmailAndPassword(String email, String password) {
+        Optional<User> userWithThisEmailOptional = userDao.findByEmail(email);
+        User userWithThisEmail = userWithThisEmailOptional.orElse(new User());
+        return passwordEncoder.matches(password, userWithThisEmail.getPassword()) ? userWithThisEmailOptional : Optional.empty();
+    }
+
     public List<User> findAll() {
         return userDao.findAll();
+    }
+
+    public List<User> findByEmailIsNot(String email) {
+        return userDao.findByEmailIsNot(email);
     }
 
     public long count() {
@@ -46,10 +58,10 @@ public class UserService {
     }
 
 
-    public void register(User user) throws UserAlreadyExistException {
+    public void register(User user) throws UserServiceException {
         Optional<User> userWithTheSameEmail = userDao.findByEmail(user.getEmail());
         if (userWithTheSameEmail.isPresent()) {
-            throw new UserAlreadyExistException("User already exists for this email");
+            throw new UserServiceException("User already exists for this email");
         }
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -59,10 +71,9 @@ public class UserService {
         userDao.save(user);
     }
 
-    public void save(User user) {
+    public void save(User user) throws UserServiceException {
         if (user == null) {
-            log.warn("User is null.");
-            return;
+            throw new UserServiceException("User is null");
         }
 
         userDao.save(user);

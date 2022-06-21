@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -39,9 +40,9 @@ public class ConversationsController {
     public String showPaginatedConversations(Model model, @RequestParam(defaultValue = "0") Integer pageNo,
                                              @RequestParam(defaultValue = "-1") Integer pageSize, Principal principal) throws AuthitificatedUserException {
 
-        User loggedUser = getLoggedUser(principal);
+        User loggedUser = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
 
-        List<Conversation> paginatedConversations = (pageSize == ALL_RECORDS_PER_PAGE)
+        List<Conversation> paginatedConversations = (pageSize.equals(ALL_RECORDS_PER_PAGE))
                 ? conversationService.findQuestionsFromUser(loggedUser)
                 : conversationService.findPaginatedQuestionsFromUser(loggedUser, pageNo, pageSize);
 
@@ -56,19 +57,14 @@ public class ConversationsController {
         return CONVERSATIONS_PAGE;
     }
 
-    @GetMapping(value = "/conversations/edit")
+    @GetMapping(value = {"/conversations/edit", "/conversations/delete"})
     @ResponseBody
     public Conversation findQuestion(Integer id) {
         return conversationService.findById(Long.valueOf(id)).orElseThrow(IllegalArgumentException::new);
     }
 
-    @PostMapping
-    public String saveQuestion(@RequestParam Map<String, String> allParams, Model model) {
-        return "";
-    }
-
-    @PostMapping("/conversations/new")
-    public String addQuestion(@RequestParam Map<String, String> allParams, Model model, Principal principal) throws AuthitificatedUserException {
+    @PostMapping(value = {"/conversations/new", "/conversations/save"})
+    public String addQuestion(@RequestParam Map<String, String> allParams, Model model, Principal principal) {
 
         Conversation conversation = null;
         try {
@@ -80,37 +76,46 @@ public class ConversationsController {
             log.warn(e.getMessage());
         }
 
-        User loggedUser = getLoggedUser(principal);
-        List<Conversation> paginatedConversations = conversationService.findQuestionsFromUser(loggedUser);
-        model.addAttribute("conversations", paginatedConversations);
+        return REDIRECT + CONVERSATIONS_PAGE;
+    }
 
-        List<User> usersForModalForm = userService.findAll();
-        model.addAttribute("users", usersForModalForm);
+    @PostMapping("/conversations/delete")
+    public String deleteQuestion(@RequestParam Long conversationId, Model model, Principal principal) {
+        Conversation deletedConversation = conversationService.findById(conversationId)
+                .orElseThrow(IllegalArgumentException::new);
 
+        conversationService.delete(deletedConversation);
 
-        log.info("Conversation with sender: " + conversation);
         return REDIRECT + CONVERSATIONS_PAGE;
     }
 
 
-
     private Conversation extractConversationFromRequest(@RequestParam Map<String,String> allParams, Principal principal) throws AuthitificatedUserException {
-        User sender = getLoggedUser(principal);
 
-        Long receiverId = Long.valueOf(allParams.get("receiverId"));
+        String conversationIdString = allParams.get("id");
+        Long conversationId = (conversationIdString != null) ? Long.valueOf(conversationIdString) : null;
+
+        User sender = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
+
+        String receiverIdString = allParams.get("receiverId");
+        Long receiverId = (receiverIdString != null) ? Long.valueOf(receiverIdString) : null;
         User receiver = userService.findById(receiverId).orElseThrow(IllegalArgumentException::new);
 
         String question = allParams.get("questionText");
+
+        String answerIdString = allParams.get("answerId");
+        Long answerid = (answerIdString != null) ? Long.valueOf(answerIdString) : null;
 
         String answerTypeName = allParams.get("answerTypeName");
         Answer.Type answerType = Answer.Type.valueOfTypeName(answerTypeName);
 
         String answerText = allParams.get("answerText");
         answerText = answerText.replaceAll("\n", "|");
-        Answer answer = new Answer(null, answerType, answerText);
+        Answer answer = new Answer(answerid, answerType, answerText);
         answerService.save(answer);
 
         Conversation conversation = new Conversation.Builder()
+                .id(conversationId)
                 .sender(sender)
                 .receiver(receiver)
                 .questionText(question)
@@ -118,12 +123,6 @@ public class ConversationsController {
                 .build();
 
         return conversation;
-    }
-
-    private User getLoggedUser(Principal principal) throws AuthitificatedUserException {
-        log.info("Logged user's username: " + principal.getName());
-        User sender = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
-        return sender;
     }
 
     private void setAttributesForPagination(Model model, int pageNo, int pageSize, long totalConversationAmount) {

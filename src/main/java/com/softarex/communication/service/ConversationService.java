@@ -32,7 +32,7 @@ public class ConversationService {
     }
 
     public List<Conversation> findQuestionsFromUser(User user) {
-        return conversationDao.findByReceiverIsNot(user);
+        return conversationDao.findBySender(user);
     }
 
     public long countForUser(User user) {
@@ -54,7 +54,7 @@ public class ConversationService {
 
     public List<Conversation> findPaginatedQuestionsFromUser(User user, int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Conversation> pageResult = conversationDao.findByReceiverIsNot(user, paging);
+        Page<Conversation> pageResult = conversationDao.findBySender(user, paging);
 
         return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
     }

@@ -67,14 +67,14 @@
     <div id="editQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form th:action="@{/conversations/edit}" method="post">
+                <form method="post" th:action="@{/conversations/save}">
                     <div class="modal-header bg-light">
                         <h4 class="modal-title">Edit question</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">
                         <input id="id" type="hidden" name="id">
-                        <input id="senderId" type="hidden" name="sender_id">
+                        <input id="answerId" type="hidden" name="answerId">
                         <div class="form-group d-flex">
                             <label class="w-25">For user</label>
                             <select id="ddEditUser" name="receiverId" class="form-control select-input w-75" aria-label="Default select example">
@@ -111,7 +111,9 @@
     <div id="deleteQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form method="post" th:action="@{/conversations/delete}">
+                    <input type="hidden" name="conversationId" id="conversationId">
+
                     <div class="modal-header">
                         <h4 class="modal-title">Delete Question</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

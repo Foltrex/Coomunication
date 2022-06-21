@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class MessengerUserDetails implements UserDetails {
+    private static final long serialVersionUID = 1L;
 
     private User user;
 
@@ -20,6 +21,14 @@ public class MessengerUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority("USER"));
+    }
+
+    public void updateLoggedUser(User user) {
+        this.user.setEmail(user.getEmail());
+        this.user.setName(user.getName());
+        this.user.setSurname(user.getSurname());
+        this.user.setPassword(user.getPassword());
+        this.user.setPhoneNumber(user.getPhoneNumber());
     }
 
     @Override

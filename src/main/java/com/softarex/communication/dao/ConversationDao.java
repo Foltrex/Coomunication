@@ -13,11 +13,7 @@ import java.util.List;
 public interface ConversationDao extends JpaRepository<Conversation, Long> {
     long countBySender(User sender);
 
-    List<Conversation> findByReceiverIsNot(User receiver);
+    List<Conversation> findBySender(User sender);
 
-    List<Conversation> findBySenderIsNot(User sender);
-
-    Page<Conversation> findByReceiverIsNot(User receiver, Pageable pageable);
-
-    Page<Conversation> findBySenderIsNot(User sender, Pageable pageable);
+    Page<Conversation> findBySender(User sender, Pageable pageable);
 }

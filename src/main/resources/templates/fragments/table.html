@@ -54,7 +54,8 @@
                     <td class="icons-column">
                       <a th:href="@{/conversations/edit/(id=*{id})}"
                          class="editModal"><i class="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Edit"></i></a>
-                      <a href="#deleteQuestionModal" class="delete" data-toggle="modal"><i class="fa-solid fa-trash-can" data-toggle="tooltip" title="Delete"></i></a>
+                      <a th:href="@{/conversations/delete/(id=*{id})}"
+                         class="deleteModal"><i class="fa-solid fa-trash-can" data-toggle="tooltip" title="Delete"></i></a>
                     </td>
                   </div>
                 </tr>

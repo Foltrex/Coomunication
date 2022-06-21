@@ -21,24 +21,34 @@ $(document).ready(function(){
     });
 
     $("#ddEditAnswerType").change(function() {
-            var value = $(this).val();
+        var value = $(this).val();
 
-            var answer = $("#editAnswer");
+        var answer = $("#editAnswer");
 
-            console.log(value);
-            switch (value) {
-                case "single line text":
-                case "multiline text":
-                case "date":
-                    answer.prop("readonly", true);
-                    break;
-                case "radio button":
-                case "checkbox":
-                case "combobox":
-                    answer.prop("readonly", false);
-                    break;
-            }
-        });
+        console.log(value);
+        switch (value) {
+            case "single line text":
+            case "multiline text":
+            case "date":
+                answer.prop("readonly", true);
+                break;
+            case "radio button":
+            case "checkbox":
+            case "combobox":
+                answer.prop("readonly", false);
+                break;
+        }
+    });
+
+    $(".deleteModal").click(function(event) {
+        event.preventDefault();
+        var href = $(this).attr("href");
+         $.get(href, function(conversation, status) {
+            $("#conversationId").val(conversation.id);
+         });
+
+         $("#deleteQuestionModal").modal()
+    });
 
     $(".editModal").click(function(event) {
         event.preventDefault();
@@ -46,7 +56,7 @@ $(document).ready(function(){
 
         $.get(href, function(conversation, status) {
             $("#id").val(conversation.id);
-            $("#senderId").val(conversation.sender.id);
+            $("#answerId").val(conversation.answer.id);
             $("#ddEditUser > option").each(function() {
                 var currentOption = $(this);
                 if (currentOption.text() === conversation.receiver.email) {
