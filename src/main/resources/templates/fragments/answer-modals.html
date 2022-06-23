@@ -25,11 +25,10 @@
                 <form method="post" th:action="@{/answers/save}">
                     <div class="modal-header bg-light">
                         <h4 class="modal-title">Edit Answer</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <button id="closeBtn" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">
                         <input id="id" type="hidden" name="id">
-                        <input id="answerId" type="hidden" name="answerId">
                         <div class="form-group">
                             <label for="user">From user</label>
                             <input type="text" id="user" class="form-control" readonly>
@@ -39,11 +38,12 @@
                             <input id="questionText" type="text" class="form-control" readonly>
                         </div>
 
-                        <div id="answer" class="form-group">
+                        <div id="answer" class="form-group my-2 checkbox">
+                            <label>Answer</label>
                         </div>
 
                         <div class="mt-4">
-                            <button type="submit" class="btn btn-lg rounded-lg btn-primary btn-block btn-submit">
+                            <button id="submitBtn" type="submit" class="btn btn-lg rounded-lg btn-primary btn-block btn-submit">
                                 SUBMIT
                             </button>
                         </div>

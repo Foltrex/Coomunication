@@ -1,10 +1,13 @@
 package com.softarex.communication.controllers;
 
+import com.softarex.communication.domain.Answer;
 import com.softarex.communication.domain.Conversation;
 import com.softarex.communication.domain.User;
 import com.softarex.communication.exception.AuthitificatedUserException;
+import com.softarex.communication.service.AnswerService;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,18 +18,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @Controller
 public class AnswersController {
+    private static final String REDIRECT = "redirect:/";
     private static final String ANSWERS_PAGE = "answers";
 
     private static final Integer ALL_RECORDS_PER_PAGE = -1;
 
     private final ConversationService conversationService;
     private final UserService userService;
+    private final AnswerService answerService;
 
-    public AnswersController(ConversationService conversationService, UserService userService) {
+    public AnswersController(ConversationService conversationService, UserService userService, AnswerService answerService) {
         this.conversationService = conversationService;
         this.userService = userService;
+        this.answerService = answerService;
     }
 
     @GetMapping("/answers")
@@ -41,7 +48,7 @@ public class AnswersController {
 
         model.addAttribute("conversations", paginatedConversations);
 
-        long totalConversationAmount = conversationService.countForUser(loggedUser);
+        long totalConversationAmount = conversationService.countAnswersFromUser(loggedUser);
         setAttributesForPagination(model, pageNo, pageSize, totalConversationAmount);
 
         return ANSWERS_PAGE;
@@ -54,8 +61,13 @@ public class AnswersController {
     }
 
     @PostMapping("/answers/save")
-    public String saveAnswer() {
-        return "";
+    public String saveAnswer(@RequestParam Long id, @RequestParam String answerText) {
+        Conversation conversation = conversationService.findById(id).orElseThrow(IllegalArgumentException::new);
+        Answer answer = conversation.getAnswer();
+        answer.setText(answerText);
+        answerService.save(answer);
+
+        return REDIRECT + ANSWERS_PAGE;
     }
 
 

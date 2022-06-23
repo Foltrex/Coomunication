@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -36,7 +37,7 @@ public class Conversation implements Identifable {
     @Column(name = "question_text", nullable = false, length = 320)
     private String questionText;
 
-    @OneToOne
+    @OneToOne(cascade = REMOVE, orphanRemoval = true)
     @JoinColumn(name = "answer_id")
     private Answer answer;
 

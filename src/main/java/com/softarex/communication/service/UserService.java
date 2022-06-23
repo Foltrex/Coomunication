@@ -58,7 +58,7 @@ public class UserService {
     }
 
 
-    public void register(User user) throws UserServiceException {
+    public User register(User user) throws UserServiceException {
         Optional<User> userWithTheSameEmail = userDao.findByEmail(user.getEmail());
         if (userWithTheSameEmail.isPresent()) {
             throw new UserServiceException("User already exists for this email");
@@ -68,14 +68,14 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
 
         user.setPassword(encodedPassword);
-        userDao.save(user);
+        return userDao.save(user);
     }
 
-    public void save(User user) throws UserServiceException {
+    public User save(User user) throws UserServiceException {
         if (user == null) {
             throw new UserServiceException("User is null");
         }
 
-        userDao.save(user);
+        return userDao.save(user);
     }
 }

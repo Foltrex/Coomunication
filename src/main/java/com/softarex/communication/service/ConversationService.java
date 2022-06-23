@@ -53,21 +53,25 @@ public class ConversationService {
         return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
     }
 
-    public long countForUser(User user) {
+    public long countQuestionsFromUser(User user) {
         return conversationDao.countBySender(user);
+    }
+
+    public long countAnswersFromUser(User user) {
+        return conversationDao.countByReceiver(user);
     }
 
     public void delete(Conversation conversation) {
         conversationDao.delete(conversation);
     }
 
-    public void save(Conversation conversation) {
+    public Conversation save(Conversation conversation) {
         if (conversation == null) {
             log.warn("Conversation is null.");
-            return;
+            return null;
         }
 
-        conversationDao.save(conversation);
+        return conversationDao.save(conversation);
     }
 
 }

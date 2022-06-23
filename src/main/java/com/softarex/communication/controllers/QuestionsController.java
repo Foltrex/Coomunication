@@ -8,6 +8,7 @@ import com.softarex.communication.service.AnswerService;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class QuestionsController {
         List<User> usersForModalForm = userService.findAll();
         model.addAttribute("users", usersForModalForm);
 
-        long totalConversationAmount = conversationService.countForUser(loggedUser);
+        long totalConversationAmount = conversationService.countQuestionsFromUser(loggedUser);
         setAttributesForPagination(model, pageNo, pageSize, totalConversationAmount);
 
         return QUESTIONS_PAGE;
@@ -78,10 +79,19 @@ public class QuestionsController {
         return REDIRECT + QUESTIONS_PAGE;
     }
 
+    @MessageMapping("/conversations")
+    public Conversation sendQuestion(Conversation conversation) {
+        Conversation savedConversation = conversationService.save(conversation);
+
+        return null;
+    }
+
     @PostMapping("/questions/delete")
     public String deleteQuestion(@RequestParam Long conversationId, Model model, Principal principal) {
         Conversation deletedConversation = conversationService.findById(conversationId)
                 .orElseThrow(IllegalArgumentException::new);
+
+        Answer deletedAnswer = deletedConversation.getAnswer();
 
         conversationService.delete(deletedConversation);
 

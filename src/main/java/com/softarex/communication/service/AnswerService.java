@@ -21,12 +21,12 @@ public class AnswerService {
         this.answerDao = answerDao;
     }
 
-    public void save(Answer answer) {
+    public Answer save(Answer answer) {
         if (answer == null) {
             log.warn("Answer is null.");
-            return;
+            return null;
         }
 
-        answerDao.save(answer);
+        return answerDao.save(answer);
     }
 }
