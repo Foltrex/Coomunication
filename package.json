@@ -2,5 +2,11 @@
   "dependencies": {
     "@stomp/stompjs": "^6.1.2",
     "sockjs-client": "^1.6.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.5",
+    "@babel/node": "^7.18.5",
+    "@babel/preset-env": "^7.18.2"
   }
 }

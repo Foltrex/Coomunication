@@ -8,6 +8,8 @@ import com.softarex.communication.service.AnswerService;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +32,15 @@ public class AnswersController {
     private final UserService userService;
     private final AnswerService answerService;
 
-    public AnswersController(ConversationService conversationService, UserService userService, AnswerService answerService) {
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public AnswersController(ConversationService conversationService, UserService userService, AnswerService answerService,
+                             SimpMessagingTemplate messagingTemplate) {
         this.conversationService = conversationService;
         this.userService = userService;
         this.answerService = answerService;
+
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping("/answers")
@@ -47,11 +54,32 @@ public class AnswersController {
                 : conversationService.findPaginatedAnswersFromUser(loggedUser, pageNo, pageSize);
 
         model.addAttribute("conversations", paginatedConversations);
+        model.addAttribute("loggedUser", loggedUser);
 
         long totalConversationAmount = conversationService.countAnswersFromUser(loggedUser);
         setAttributesForPagination(model, pageNo, pageSize, totalConversationAmount);
 
         return ANSWERS_PAGE;
+    }
+
+    @MessageMapping("/chat/answer")
+    public void editAnswer(Conversation conversation) {
+        log.info("received conversation from websocket: " + conversation);
+
+        Conversation realConversation = conversationService.findById(conversation.getId()).orElseThrow(IllegalArgumentException::new);
+        Answer realAnswer = realConversation.getAnswer();
+        Answer answer = conversation.getAnswer();
+        realAnswer.setText(answer.getText());
+
+        User sender = realConversation.getSender();
+        Long senderId = sender.getId();
+
+        User receiver = realConversation.getReceiver();
+        Long receiverId = receiver.getId();
+
+        Conversation savedConversation = conversationService.save(realConversation);
+        messagingTemplate.convertAndSend("/topic/messages/" + senderId, savedConversation);
+        messagingTemplate.convertAndSend("/topic/messages/" + receiverId, savedConversation);
     }
 
     @GetMapping("/answers/edit")

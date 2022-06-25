@@ -24,40 +24,37 @@
     <div id="addQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form th:action="@{/questions/new}" method="post">
-                    <div class="modal-header bg-light">
-                        <h4 class="modal-title">Add question</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="modal-header bg-light">
+                    <h4 class="modal-title">Add question</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group d-flex">
+                        <label class="w-25">For user</label>
+                        <select id="ddUser" name="receiverId" class="form-control select-input w-75" aria-label="Default select example">
+                            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.email}"></option>
+                        </select>
                     </div>
-                    <div class="modal-body">
-
-                        <div class="form-group d-flex">
-                            <label class="w-25">For user</label>
-                            <select id="ddUser" name="receiverId" class="form-control select-input w-75" aria-label="Default select example">
-                                <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.email}"></option>
-                            </select>
-                        </div>
-                        <div class="form-group d-flex">
-                            <label class="w-25">Question</label>
-                            <input type="text" name="questionText" class="form-control w-75" required>
-                        </div>
-                        <div class="form-group d-flex">
-                            <label class="w-25">Answer type</label>
-                            <select name="answerTypeName" id="ddAnswerType" class="form-control select-input w-75" aria-label="Default select example">
-                                <option th:each="answerType : ${T(com.softarex.communication.domain.Answer.Type).values()}"
-                                        th:value="${answerType.type}" th:text="${answerType.type}"></option>
-                            </select>
-                        </div>
-                        <div id="answer-form" class="form-group d-flex">
-                            <label class="w-25">Options</label>
-                            <textarea name="answerText" id="answer" class="form-control w-75"></textarea>
-                        </div>
+                    <div class="form-group d-flex">
+                        <label class="w-25">Question</label>
+                        <input id="questionTextNew" type="text" name="questionText" class="form-control w-75" required>
                     </div>
-                    <div class="modal-footer bg-light">
-                        <input type="button" class="btn border rounded-lg btn-default bg-white" data-dismiss="modal" value="Cancel">
-                        <input type="submit" class="btn border rounded-lg btn-success bg-primary" value="Add">
+                    <div class="form-group d-flex">
+                        <label class="w-25">Answer type</label>
+                        <select name="answerTypeName" id="ddAnswerType" class="form-control select-input w-75" aria-label="Default select example">
+                            <option th:each="answerType : ${T(com.softarex.communication.domain.Answer.Type).values()}"
+                                    th:value="${answerType.type}" th:text="${answerType.type}"></option>
+                        </select>
                     </div>
-                </form>
+                    <div id="answer-form" class="form-group d-flex">
+                        <label class="w-25">Options</label>
+                        <textarea name="answerText" id="answer" class="form-control w-75"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <input type="button" class="btn border rounded-lg btn-default bg-white" data-dismiss="modal" value="Cancel">
+                    <button onclick="addQuestion()" class="btn border rounded-lg btn-success bg-primary">Add</button>
+                </div>
             </div>
         </div>
     </div>
@@ -67,41 +64,39 @@
     <div id="editQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" th:action="@{/questions/save}">
-                    <div class="modal-header bg-light">
-                        <h4 class="modal-title">Edit question</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="modal-header bg-light">
+                    <h4 class="modal-title">Edit question</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input id="id" type="hidden" name="id">
+                    <input id="answerId" type="hidden" name="answerId">
+                    <div class="form-group d-flex">
+                        <label class="w-25">For user</label>
+                        <select id="ddEditUser" name="receiverId" class="form-control select-input w-75" aria-label="Default select example">
+                            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.email}"></option>
+                        </select>
                     </div>
-                    <div class="modal-body">
-                        <input id="id" type="hidden" name="id">
-                        <input id="answerId" type="hidden" name="answerId">
-                        <div class="form-group d-flex">
-                            <label class="w-25">For user</label>
-                            <select id="ddEditUser" name="receiverId" class="form-control select-input w-75" aria-label="Default select example">
-                                <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.email}"></option>
-                            </select>
-                        </div>
-                        <div class="form-group d-flex">
-                            <label class="w-25">Question</label>
-                            <input id="questionText" type="text" name="questionText" class="form-control w-75" required>
-                        </div>
-                        <div class="form-group d-flex">
-                            <label class="w-25">Answer type</label>
-                            <select name="answerTypeName" id="ddEditAnswerType" class="form-control select-input w-75" aria-label="Default select example">
-                                <option th:each="answerType : ${T(com.softarex.communication.domain.Answer.Type).values()}"
-                                        th:value="${answerType.type}" th:text="${answerType.type}"></option>
-                            </select>
-                        </div>
-                        <div id="edit-answer-form" class="form-group d-flex">
-                            <label class="w-25">Options</label>
-                            <textarea name="answerText" id="editAnswer" class="form-control w-75"></textarea>
-                        </div>
+                    <div class="form-group d-flex">
+                        <label class="w-25">Question</label>
+                        <input id="questionText" type="text" name="questionText" class="form-control w-75" required>
                     </div>
-                    <div class="modal-footer bg-light">
-                        <input type="button" class="btn border rounded-lg btn-default bg-white" data-dismiss="modal" value="Cancel">
-                        <input id="submitBtn" type="submit" class="btn border rounded-lg btn-success bg-primary" value="Save">
+                    <div class="form-group d-flex">
+                        <label class="w-25">Answer type</label>
+                        <select name="answerTypeName" id="ddEditAnswerType" class="form-control select-input w-75" aria-label="Default select example">
+                            <option th:each="answerType : ${T(com.softarex.communication.domain.Answer.Type).values()}"
+                                    th:value="${answerType.type}" th:text="${answerType.type}"></option>
+                        </select>
                     </div>
-                </form>
+                    <div id="edit-answer-form" class="form-group d-flex">
+                        <label class="w-25">Options</label>
+                        <textarea name="answerText" id="editAnswer" class="form-control w-75"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <input type="button" class="btn border rounded-lg btn-default bg-white" data-dismiss="modal" value="Cancel">
+                    <button id="submitBtn" onclick="editQuestion()" class="btn border rounded-lg btn-success bg-primary">Save</button>
+                </div>
             </div>
         </div>
     </div>
@@ -111,22 +106,20 @@
     <div id="deleteQuestionModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" th:action="@{/questions/delete}">
-                    <input type="hidden" name="conversationId" id="conversationId">
+                <input type="hidden" name="conversationId" id="conversationId">
 
-                    <div class="modal-header">
-                        <h4 class="modal-title">Delete Question</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete these Records?</p>
-                        <p class="text-warning"><small>This action cannot be undone.</small></p>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                        <input id="deleteBtn" type="submit" class="btn btn-danger" value="Delete">
-                    </div>
-                </form>
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Question</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete these Records?</p>
+                    <p class="text-warning"><small>This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <button id="deleteBtn" onclick="deleteQuestion()" class="btn btn-danger">Delete</button>
+                </div>
             </div>
         </div>
     </div>

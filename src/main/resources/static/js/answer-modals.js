@@ -6,6 +6,7 @@ $(document).ready(function() {
 
         $.get(href, function(conversation, status) {
             $("#id").val(conversation.id);
+            $("#answerId").val(conversation.answer.id);
             $("#user").val(conversation.sender.email);
             $("#questionText").val(conversation.questionText);
 

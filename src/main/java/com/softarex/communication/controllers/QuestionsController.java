@@ -8,7 +8,8 @@ import com.softarex.communication.service.AnswerService;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +31,15 @@ public class QuestionsController {
     private final UserService userService;
     private final AnswerService answerService;
 
-    public QuestionsController(ConversationService conversationService, UserService userService, AnswerService answerService) {
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public QuestionsController(ConversationService conversationService, UserService userService, AnswerService answerService,
+                               SimpMessagingTemplate messagingTemplate) {
         this.conversationService = conversationService;
         this.userService = userService;
         this.answerService = answerService;
+
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping(value = {"/questions", "/"})
@@ -50,6 +56,7 @@ public class QuestionsController {
 
         List<User> usersForModalForm = userService.findAll();
         model.addAttribute("users", usersForModalForm);
+        model.addAttribute("loggedUser", loggedUser);
 
         long totalConversationAmount = conversationService.countQuestionsFromUser(loggedUser);
         setAttributesForPagination(model, pageNo, pageSize, totalConversationAmount);
@@ -79,11 +86,36 @@ public class QuestionsController {
         return REDIRECT + QUESTIONS_PAGE;
     }
 
-    @MessageMapping("/conversations")
-    public Conversation sendQuestion(Conversation conversation) {
-        Conversation savedConversation = conversationService.save(conversation);
+    @MessageMapping("/chat/delete")
+    public void deleteQuestion(Conversation conversation) {
+        Conversation realConversation = conversationService.findById(conversation.getId()).orElseThrow(IllegalArgumentException::new);
+        log.info("Delete conversation: " + realConversation);
+        conversationService.delete(realConversation);
 
-        return null;
+        Long receiverId = realConversation.getReceiver().getId();
+        Long senderId = realConversation.getSender().getId();
+
+        Conversation deletedConversation = new Conversation.Builder().id(realConversation.getId()).build();
+        messagingTemplate.convertAndSend("/topic/messages/" + receiverId, deletedConversation);
+        messagingTemplate.convertAndSend("/topic/messages/" + senderId, deletedConversation);
+    }
+
+    @MessageMapping("/chat/{id}")
+    public void sendQuestion(@DestinationVariable Long id, @Payload Conversation conversation, Principal loggedUser) {
+        User sender = userService.findByEmail(loggedUser.getName()).orElseThrow(IllegalArgumentException::new);
+        User receiver = userService.findById(id).orElseThrow(IllegalArgumentException::new);
+        conversation.setSender(sender);
+        conversation.setReceiver(receiver);
+
+        log.info("Received conversation" + conversation);
+        Conversation savedConversation = conversationService.save(conversation);
+        messagingTemplate.convertAndSend("/topic/messages/" + id, savedConversation);
+        messagingTemplate.convertAndSend("/topic/messages/" + sender.getId(), savedConversation);
+//        // answer from receiver
+//        messagingTemplate.convertAndSendToUser(String.valueOf(receiverId),destination, conversation);
+//
+//        // question from sender
+//        messagingTemplate.convertAndSendToUser(String.valueOf(sender.getId()), destination, conversation);
     }
 
     @PostMapping("/questions/delete")

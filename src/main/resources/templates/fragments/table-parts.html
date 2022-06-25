@@ -47,7 +47,7 @@
 
 <div th:fragment="rowsPerPage">
     <form th:action="@{/questions}" method="get">
-        <select onchange="this.form.submit()" name="pageSize" class="browser-default custom-select">
+        <select id="pageSize" onchange="this.form.submit()" name="pageSize" class="browser-default custom-select">
             <div th:if="${pageSize} == -1">
                 <option selected value="-1">All</option>
                 <option value="5">5</option>

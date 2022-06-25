@@ -37,7 +37,7 @@ public class Conversation implements Identifable {
     @Column(name = "question_text", nullable = false, length = 320)
     private String questionText;
 
-    @OneToOne(cascade = REMOVE, orphanRemoval = true)
+    @OneToOne(cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "answer_id")
     private Answer answer;
 

@@ -24,6 +24,7 @@
             <div class="row">
               <div class="col-sm-6">
                 <h2 class="text-dark">Your questions</h2>
+                <input type="hidden" id="loggedUser" th:value="${loggedUser.id}">
               </div>
               <div class="col-sm-6">
                 <a href="#addQuestionModal" class="btn btn-success bg-primary" data-toggle="modal"><i class="fa-solid fa-plus"></i> <span>Add question</span></a>
@@ -40,8 +41,8 @@
               <th></th>
             </tr>
             </thead>
-            <tbody>
-                <tr th:each="conversation : ${conversations}">
+            <tbody id="questionTable">
+                <tr th:each="conversation : ${conversations}"  th:id="'conversation-'+ ${conversation.id}">
                   <div th:object="${conversation}">
                     <td><span th:text="*{receiver.email}"></span></td>
                     <td><span th:text="*{questionText}"></span></td>
@@ -84,8 +85,9 @@
         <div class="table-wrapper">
           <div class="table-title">
             <div class="row">
-              <div class="col-sm-6">
+              <div class="col-sm-6 my-table-title">
                 <h2 class="text-dark">Answer the question</h2>
+                <input type="hidden" id="loggedUser" th:value="${loggedUser.id}">
               </div>
             </div>
           </div>
@@ -98,8 +100,8 @@
               <th></th>
             </tr>
             </thead>
-            <tbody>
-            <tr th:each="conversation : ${conversations}">
+            <tbody id="answerTable">
+            <tr th:each="conversation : ${conversations}" th:id="'conversation-'+ ${conversation.id}">
               <div th:object="${conversation}">
                 <td><span th:text="*{sender.email}"></span></td>
                 <td><span th:text="*{questionText}"></span></td>

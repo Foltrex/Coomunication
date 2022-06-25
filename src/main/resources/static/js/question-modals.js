@@ -40,7 +40,7 @@ $(document).ready(function(){
         }
     });
 
-    $(".deleteQuestionModal").click(function(event) {
+    $("#questionTable").on("click", ".deleteQuestionModal", function(event) {
         event.preventDefault();
         var href = $(this).attr("href");
          $.get(href, function(conversation, status) {
@@ -50,7 +50,7 @@ $(document).ready(function(){
          $("#deleteQuestionModal").modal()
     });
 
-    $(".editQuestionModal").click(function(event) {
+    $("#questionTable").on("click", ".editQuestionModal", function(event) {
         event.preventDefault();
         var href = $(this).attr("href");
 
