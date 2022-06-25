@@ -2,7 +2,7 @@ var stompClient = null;
 var loggedUserId = null;
 
 function connect(id) {
-    var socket = new SockJS('/chat');
+    var socket = new SockJS('/conversations');
     stompClient = Stomp.over(socket);
     loggedUserId = $("#loggedUser").val();
 
@@ -48,7 +48,7 @@ function addQuestion() {
         }
     }
 
-    stompClient.send("/app/chat/" + receiverId, {}, JSON.stringify(message));
+    stompClient.send("/app/conversations/add-question/" + receiverId, {}, JSON.stringify(message));
 }
 
 function editAnswer() {
@@ -65,7 +65,7 @@ function editAnswer() {
         }
     }
 
-    stompClient.send("/app/chat/answer", {}, JSON.stringify(message));
+    stompClient.send("/app/conversations/add-answer", {}, JSON.stringify(message));
 }
 
 function editQuestion() {
@@ -99,7 +99,7 @@ function editQuestion() {
         }
     }
 
-    stompClient.send("/app/chat/" + receiverId, {}, JSON.stringify(message));
+    stompClient.send("/app/conversations/edit-question/" + receiverId, {}, JSON.stringify(message));
 }
 
 function deleteQuestion() {
@@ -108,7 +108,7 @@ function deleteQuestion() {
         "id":conversationId
     }
 
-    stompClient.send("/app/chat/delete", {}, JSON.stringify(message));
+    stompClient.send("/app/conversations/delete-question", {}, JSON.stringify(message));
 }
 
 function showMessageOutput(messageOutput) {

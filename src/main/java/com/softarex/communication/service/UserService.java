@@ -41,6 +41,11 @@ public class UserService {
         return passwordEncoder.matches(password, userWithThisEmail.getPassword()) ? userWithThisEmailOptional : Optional.empty();
     }
 
+    public List<User> findByUserIsNot(User user) {
+        Long userId = user.getId();
+        return userDao.findByIdIsNot(userId);
+    }
+
     public List<User> findAll() {
         return userDao.findAll();
     }

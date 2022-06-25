@@ -3,6 +3,7 @@ package com.softarex.communication.service;
 import com.softarex.communication.dao.ConversationDao;
 import com.softarex.communication.domain.Conversation;
 import com.softarex.communication.domain.User;
+import com.softarex.communication.exception.ConversationServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
@@ -27,8 +27,8 @@ public class ConversationService {
         this.conversationDao = conversationDao;
     }
 
-    public Optional<Conversation> findById(Long id) {
-        return conversationDao.findById(id);
+    public Conversation findById(Long id) throws ConversationServiceException {
+        return conversationDao.findById(id).orElseThrow(ConversationServiceException::new);
     }
 
     public List<Conversation> findQuestionsFromUser(User user) {

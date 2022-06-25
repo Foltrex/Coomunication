@@ -50,8 +50,17 @@ $(document).ready(function(){
          $("#deleteQuestionModal").modal()
     });
 
+    $(".addQuestionModal").click(function() {
+        var select = document.getElementById("ddUser");
+        addUsersToSelect(select);
+    });
+
     $("#questionTable").on("click", ".editQuestionModal", function(event) {
         event.preventDefault();
+
+        var select = document.getElementById("ddEditUser");
+        addUsersToSelect(select);
+
         var href = $(this).attr("href");
 
         $.get(href, function(conversation, status) {
@@ -63,7 +72,7 @@ $(document).ready(function(){
                     currentOption.attr("selected", "selected");
                 }
             });
-//             val(conversation.receiver.email);
+
             $("#questionText").val(conversation.questionText);
 
             $("#ddEditAnswerType > option").each(function() {
@@ -85,3 +94,24 @@ $(document).ready(function(){
         $("#editQuestionModal").modal()
     });
 });
+
+function addUsersToSelect(select) {
+    if (select.children.length !== 0) {
+        return;
+    }
+
+    const xhttp = new XMLHttpRequest();
+
+    xhttp.onload = function() {
+        var users = JSON.parse(this.responseText);
+        for (let x in users) {
+            var option = document.createElement('option');
+            option.value = users[x].id;
+            option.innerHTML = users[x].email;
+            select.appendChild(option);
+        }
+    }
+
+    xhttp.open("GET", "/questions/users");
+    xhttp.send();
+}
