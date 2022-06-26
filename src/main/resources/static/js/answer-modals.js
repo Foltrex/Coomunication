@@ -4,7 +4,7 @@ $(document).ready(function() {
         event.preventDefault();
         var href = $(this).attr("href");
 
-        $.get(href, function(conversation, status) {
+        $.get(href, function(conversation) {
             $("#id").val(conversation.id);
             $("#answerId").val(conversation.answer.id);
             $("#user").val(conversation.sender.email);

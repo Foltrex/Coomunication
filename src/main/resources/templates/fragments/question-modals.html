@@ -53,7 +53,7 @@
                 </div>
                 <div class="modal-footer bg-light">
                     <input type="button" class="btn border rounded-lg btn-default bg-white" data-dismiss="modal" value="Cancel">
-                    <button onclick="addQuestion()" class="btn border rounded-lg btn-success bg-primary">Add</button>
+                    <button onclick="addQuestion()" data-dismiss="modal" class="btn border rounded-lg btn-success bg-primary">Add</button>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="modal-footer bg-light">
                     <input type="button" class="btn border rounded-lg btn-default bg-white" data-dismiss="modal" value="Cancel">
-                    <button id="submitBtn" onclick="editQuestion()" class="btn border rounded-lg btn-success bg-primary">Save</button>
+                    <button id="submitBtn" onclick="editQuestion()" data-dismiss="modal" class="btn border rounded-lg btn-success bg-primary">Save</button>
                 </div>
             </div>
         </div>
@@ -118,7 +118,7 @@
                 </div>
                 <div class="modal-footer">
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <button id="deleteBtn" onclick="deleteQuestion()" class="btn btn-danger">Delete</button>
+                    <button id="deleteBtn" onclick="deleteQuestion()" data-dismiss="modal" class="btn btn-danger">Delete</button>
                 </div>
             </div>
         </div>

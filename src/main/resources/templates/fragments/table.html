@@ -63,7 +63,11 @@
             </tbody>
           </table>
           <div class="d-flex justify-content-between">
-            <div class="hint-text"><p><span th:text="${pageSize * pageNo + 1}"></span>-<span th:text="${pageSize * pageNo} + ${#lists.size(conversations)}"></span> of <span th:text="${conversationAmount}"></span></p></div>
+            <div class="hint-text">
+              <p>
+                <span th:text="${pageSize * pageNo + 1}"></span>-<span id="recordsCounts" th:text="${pageSize * pageNo} + ${#lists.size(conversations)}"></span> of <span id="totalRecordsCount" th:text="${conversationAmount}"></span>
+              </p>
+            </div>
             <div th:replace="fragments/table-parts.html :: pagination"></div>
             <div th:replace="fragments/table-parts.html :: rowsPerPage"></div>
           </div>

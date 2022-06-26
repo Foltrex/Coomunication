@@ -2,8 +2,8 @@ package com.softarex.communication.controllers;
 
 import com.softarex.communication.domain.Conversation;
 import com.softarex.communication.domain.User;
-import com.softarex.communication.exception.AuthitificatedUserException;
 import com.softarex.communication.exception.ConversationServiceException;
+import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +36,16 @@ public class QuestionsController {
         this.messagingTemplate = messagingTemplate;
     }
 
+
     @GetMapping(value = {"/questions", "/"})
     public String showPaginatedQuestions(Model model, @RequestParam(defaultValue = "0") Integer pageNo,
-                                             @RequestParam(defaultValue = "-1") Integer pageSize, Principal loggedUser) throws AuthitificatedUserException {
+                                             @RequestParam(defaultValue = "-1") Integer pageSize, Principal loggedUser) throws UserServiceException {
 
-        User currentLoggedUser = userService.findByEmail(loggedUser.getName()).orElseThrow(AuthitificatedUserException::new);
+        User currentLoggedUser = userService.findByEmail(loggedUser.getName());
+
+        model.addAttribute("pageNo", pageNo);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("loggedUser", currentLoggedUser);
 
         List<Conversation> paginatedConversations = (pageSize.equals(ALL_RECORDS_PER_PAGE))
                 ? conversationService.findQuestionsFromUser(currentLoggedUser)
@@ -50,15 +55,19 @@ public class QuestionsController {
 
 
         long totalConversationAmount = conversationService.countQuestionsFromUser(currentLoggedUser);
-        setAttributesForPagination(model, pageNo, pageSize, totalConversationAmount);
+        model.addAttribute("conversationAmount", totalConversationAmount);
+
+        long pageAmount = !pageSize.equals(ALL_RECORDS_PER_PAGE) ? (long) Math.ceil((double) totalConversationAmount / pageSize) : 1;
+        model.addAttribute("pageAmounts", pageAmount);
 
         return QUESTIONS_PAGE;
     }
 
+
     @GetMapping("/questions/users")
     @ResponseBody
-    public List<User> getAllUsers(Principal loggedUser) {
-        User currentLoggedUser = userService.findByEmail(loggedUser.getName()).orElseThrow(IllegalArgumentException::new);
+    public List<User> getAllUsers(Principal loggedUser) throws UserServiceException {
+        User currentLoggedUser = userService.findByEmail(loggedUser.getName());
         return userService.findByUserIsNot(currentLoggedUser);
     }
 
@@ -73,41 +82,33 @@ public class QuestionsController {
     @MessageMapping("/conversations/delete-question")
     public void deleteQuestion(Conversation conversation) throws ConversationServiceException {
         Conversation realConversation = conversationService.findById(conversation.getId());
-        log.info("Delete conversation: " + realConversation);
-        conversationService.delete(realConversation);
-
         Long receiverId = realConversation.getReceiver().getId();
         Long senderId = realConversation.getSender().getId();
 
-        Conversation deletedConversation = new Conversation.Builder().id(realConversation.getId()).build();
+        conversationService.delete(realConversation);
+
+        Conversation deletedConversation = new Conversation.Builder()
+                .id(realConversation.getId())
+                .sender(realConversation.getSender())
+                .receiver(realConversation.getReceiver())
+                .build();
+
         messagingTemplate.convertAndSend("/topic/messages/" + receiverId, deletedConversation);
         messagingTemplate.convertAndSend("/topic/messages/" + senderId, deletedConversation);
     }
 
     @MessageMapping(value = {"/conversations/add-question/{id}", "/conversations/edit-question/{id}"})
-    public void saveQuestion(@DestinationVariable Long id, @Payload Conversation conversation, Principal loggedUser) {
-        User sender = userService.findByEmail(loggedUser.getName()).orElseThrow(IllegalArgumentException::new);
-        User receiver = userService.findById(id).orElseThrow(IllegalArgumentException::new);
+    public void saveQuestion(@DestinationVariable Long id, @Payload Conversation conversation, Principal loggedUser) throws UserServiceException {
+        User sender = userService.findByEmail(loggedUser.getName());
         conversation.setSender(sender);
+
+        User receiver = userService.findById(id);
         conversation.setReceiver(receiver);
 
-        log.info("Received conversation" + conversation);
         Conversation savedConversation = conversationService.save(conversation);
+
         messagingTemplate.convertAndSend("/topic/messages/" + id, savedConversation);
         messagingTemplate.convertAndSend("/topic/messages/" + sender.getId(), savedConversation);
     }
 
-
-    private void setAttributesForPagination(Model model, int pageNo, int pageSize, long totalConversationAmount) {
-        long pageAmount = 1;
-        if (pageSize != ALL_RECORDS_PER_PAGE) {
-            pageAmount = (long) Math.ceil((double) totalConversationAmount / pageSize);
-        }
-
-        model.addAttribute("pageNo", pageNo);
-        model.addAttribute("pageSize", pageSize);
-
-        model.addAttribute("conversationAmount", totalConversationAmount);
-        model.addAttribute("pageAmounts", pageAmount);
-    }
 }

@@ -3,7 +3,8 @@ package com.softarex.communication.controllers;
 import com.softarex.communication.domain.Answer;
 import com.softarex.communication.domain.Conversation;
 import com.softarex.communication.domain.User;
-import com.softarex.communication.exception.AuthitificatedUserException;
+import com.softarex.communication.exception.ConversationServiceException;
+import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,61 +41,51 @@ public class AnswersController {
 
     @GetMapping("/answers")
     public String showPaginatedAnswers(Model model, @RequestParam(defaultValue = "0") Integer pageNo,
-                                       @RequestParam(defaultValue = "-1") Integer pageSize, Principal principal) throws AuthitificatedUserException {
+                                       @RequestParam(defaultValue = "-1") Integer pageSize, Principal loggedUser) throws UserServiceException {
 
-        User loggedUser = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
+        User currentLoggedUser = userService.findByEmail(loggedUser.getName());
+
+        model.addAttribute("pageNo", pageNo);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("loggedUser", currentLoggedUser);
 
         List<Conversation> paginatedConversations = (pageSize.equals(ALL_RECORDS_PER_PAGE))
-                ? conversationService.findAnswersFromUser(loggedUser)
-                : conversationService.findPaginatedAnswersFromUser(loggedUser, pageNo, pageSize);
+                ? conversationService.findAnswersFromUser(currentLoggedUser)
+                : conversationService.findPaginatedAnswersFromUser(currentLoggedUser, pageNo, pageSize);
 
         model.addAttribute("conversations", paginatedConversations);
-        model.addAttribute("loggedUser", loggedUser);
 
-        long totalConversationAmount = conversationService.countAnswersFromUser(loggedUser);
-        setAttributesForPagination(model, pageNo, pageSize, totalConversationAmount);
+        long totalConversationAmount = conversationService.countAnswersFromUser(currentLoggedUser);
+        model.addAttribute("conversationAmount", totalConversationAmount);
+
+        long pageAmount = !pageSize.equals(ALL_RECORDS_PER_PAGE) ? (long) Math.ceil((double) totalConversationAmount / pageSize) : 1;
+        model.addAttribute("pageAmounts", pageAmount);
 
         return ANSWERS_PAGE;
     }
 
     @MessageMapping("/conversations/add-answer")
-    public void editAnswer(Conversation conversation) {
-        log.info("received conversation from websocket: " + conversation);
-
-        Conversation realConversation = conversationService.findById(conversation.getId()).orElseThrow(IllegalArgumentException::new);
+    public void editAnswer(Conversation conversation) throws ConversationServiceException {
+        Conversation realConversation = conversationService.findById(conversation.getId());
         Answer realAnswer = realConversation.getAnswer();
         Answer answer = conversation.getAnswer();
         realAnswer.setText(answer.getText());
 
-        User sender = realConversation.getSender();
-        Long senderId = sender.getId();
+        User realSender = realConversation.getSender();
+        Long senderId = realSender.getId();
 
-        User receiver = realConversation.getReceiver();
-        Long receiverId = receiver.getId();
+        User realReceiver = realConversation.getReceiver();
+        Long receiverId = realReceiver.getId();
 
         Conversation savedConversation = conversationService.save(realConversation);
+
         messagingTemplate.convertAndSend("/topic/messages/" + senderId, savedConversation);
         messagingTemplate.convertAndSend("/topic/messages/" + receiverId, savedConversation);
     }
 
     @GetMapping("/answers/edit")
     @ResponseBody
-    public Conversation editAnswer(Long id) {
-        return conversationService.findById(id).orElseThrow(IllegalArgumentException::new);
-    }
-
-
-
-    private void setAttributesForPagination(Model model, int pageNo, int pageSize, long totalConversationAmount) {
-        long pageAmount = 1;
-        if (pageSize != ALL_RECORDS_PER_PAGE) {
-            pageAmount = (long) Math.ceil((double) totalConversationAmount / pageSize);
-        }
-
-        model.addAttribute("pageNo", pageNo);
-        model.addAttribute("pageSize", pageSize);
-
-        model.addAttribute("conversationAmount", totalConversationAmount);
-        model.addAttribute("pageAmounts", pageAmount);
+    public Conversation editAnswer(Long id) throws ConversationServiceException {
+        return conversationService.findById(id);
     }
 }

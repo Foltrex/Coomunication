@@ -27,18 +27,17 @@ public class UserService {
         this.userDao = userDao;
     }
 
-    public Optional<User> findById(Long id) {
-        return userDao.findById(id);
+    public User findById(Long id) throws UserServiceException {
+        return userDao.findById(id).orElseThrow(UserServiceException::new);
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userDao.findByEmail(email);
+    public User findByEmail(String email) throws UserServiceException {
+        return userDao.findByEmail(email).orElseThrow(UserServiceException::new);
     }
 
-    public Optional<User> findByEmailAndPassword(String email, String password) {
-        Optional<User> userWithThisEmailOptional = userDao.findByEmail(email);
-        User userWithThisEmail = userWithThisEmailOptional.orElse(new User());
-        return passwordEncoder.matches(password, userWithThisEmail.getPassword()) ? userWithThisEmailOptional : Optional.empty();
+    public User findByEmailAndPassword(String email, String password) {
+        User userWithThisEmail = userDao.findByEmail(email).orElse(new User());
+        return passwordEncoder.matches(password, userWithThisEmail.getPassword()) ? userWithThisEmail : null;
     }
 
     public List<User> findByUserIsNot(User user) {

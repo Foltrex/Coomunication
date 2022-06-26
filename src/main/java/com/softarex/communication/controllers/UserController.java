@@ -1,7 +1,6 @@
 package com.softarex.communication.controllers;
 
 import com.softarex.communication.domain.User;
-import com.softarex.communication.exception.AuthitificatedUserException;
 import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.security.MessengerUserDetails;
 import com.softarex.communication.service.UserService;
@@ -16,14 +15,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Objects;
-import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -68,8 +63,8 @@ public class UserController {
     }
 
     @GetMapping("/user/edit")
-    public String editUser(Model model, Principal principal) throws AuthitificatedUserException {
-        User loggedUser = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
+    public String editUser(Model model, Principal principal) throws UserServiceException {
+        User loggedUser = userService.findByEmail(principal.getName());
         model.addAttribute("user", loggedUser);
 
         return PROFILE_PAGE;
@@ -86,13 +81,12 @@ public class UserController {
             return PROFILE_PAGE;
         }
 
-        Optional<User> userOptional = userService.findByEmailAndPassword(currentEmail, currentPassword);
+        User user = userService.findByEmailAndPassword(currentEmail, currentPassword);
 
         try {
-            if (userOptional.isPresent()) {
-                User userWithOldCredentials = userOptional.get();
+            if (user != null) {
                 if (userWithNewCredentials.getPassword() == null || userWithNewCredentials.getPassword().isEmpty()) {
-                    userWithNewCredentials.setPassword(userWithOldCredentials.getPassword());
+                    userWithNewCredentials.setPassword(user.getPassword());
                 }
 
                 userService.save(userWithNewCredentials);
@@ -111,8 +105,8 @@ public class UserController {
 
 
     @GetMapping("/user/delete")
-    public String showDeleteForm(Model model, Principal principal) throws AuthitificatedUserException {
-        User loggedUser = userService.findByEmail(principal.getName()).orElseThrow(AuthitificatedUserException::new);
+    public String showDeleteForm(Model model, Principal principal) throws UserServiceException {
+        User loggedUser = userService.findByEmail(principal.getName());
         model.addAttribute("user", loggedUser);
         return DELETE_ACCOUNT_PAGE;
     }
@@ -126,9 +120,9 @@ public class UserController {
             return DELETE_ACCOUNT_PAGE;
         }
 
-        Optional<User> userOptional = userService.findByEmailAndPassword(user.getEmail(), user.getPassword());
-        if (userOptional.isPresent()) {
-            userService.delete(userOptional.get());
+        User deletedUser = userService.findByEmailAndPassword(user.getEmail(), user.getPassword());
+        if (deletedUser != null) {
+            userService.delete(deletedUser);
 
             HttpSession session = request.getSession(false);
             if(session != null) {

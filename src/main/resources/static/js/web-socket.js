@@ -1,7 +1,7 @@
 var stompClient = null;
 var loggedUserId = null;
 
-function connect(id) {
+function connect() {
     var socket = new SockJS('/conversations');
     stompClient = Stomp.over(socket);
     loggedUserId = $("#loggedUser").val();
@@ -9,12 +9,12 @@ function connect(id) {
     stompClient.connect({}, function(frame) {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/messages/' + loggedUserId, function(messageOutput) {
-            console.log("i got sth");
             showMessageOutput(JSON.parse(messageOutput.body));
         });
     });
 }
 
+// TODO: DELETE
 function disconnect() {
     if(stompClient != null) {
         stompClient.disconnect();
@@ -112,25 +112,36 @@ function deleteQuestion() {
 }
 
 function showMessageOutput(messageOutput) {
-    console.log(messageOutput);
+    var receiverId = parseInt(messageOutput.receiver.id, 10);
+    var senderId = parseInt(messageOutput.sender.id, 10);
+    
     if (messageOutput.questionText === null) {
-        deleteConversation(messageOutput.id);
+        var currentRecordsOnPage = $("#questionTable tr").length;
+
+        console.log(typeof currentRecordsOnPage);
+        console.log(currentRecordsOnPage);
+
+        if (currentRecordsOnPage === 1) {
+            // TODO: CHECK THIS PART OF CODE
+            if (receiverId === parseInt(loggedUserId, 10)) {
+                location.href = "/answers";
+            } else {
+                location.href = "/questions";
+            }
+        } else {
+            deleteConversation(messageOutput.id);
+        }
         return;
     }
 
-    var receiverId = parseInt(messageOutput.receiver.id, 10);
-    var senderId = parseInt(messageOutput.sender.id, 10);
     if (receiverId === parseInt(loggedUserId, 10)) {
         saveMessageInAnswerTable(messageOutput);
     } else if (senderId === parseInt(loggedUserId, 10)) {
         saveMessageInQuestionTable(messageOutput);
     }
-
-    // var pageSize = $("#pageSize").val()
 }
 
 function saveMessageInAnswerTable(messageOutput) {
-    console.log("i work in answer table");
     var senderEmailColumn = `<td>${messageOutput.sender.email}</td>`;
     var questionTextColumn = `<td>${messageOutput.questionText}</td>`;
 
@@ -155,35 +166,73 @@ function saveMessageInAnswerTable(messageOutput) {
 }
 
 function saveMessageInQuestionTable(messageOutput) {
-        console.log("i work in question table");
-        var receiverEmailColumn = `<td>${messageOutput.receiver.email}</td>`;
-        var questionTextColumn = `<td>${messageOutput.questionText}</td>`;
+    var currentRecordsOnPage = $("#questionTable tr").length;
+    var maxRecordsOnPageString = $("#pageSize").val();
+    var maxRecordsOnPage = parseInt(maxRecordsOnPageString, 10);
 
-        var answerType = messageOutput.answer.type;
-        answerType = answerType.replaceAll('_', ' ');
-        answerType = answerType.toLowerCase();
+    console.log(typeof currentRecordsOnPage);
+    console.log(currentRecordsOnPage);
 
-        var answerTypeColumn = `<td>${answerType}</td>`;
+    if (currentRecordsOnPage === maxRecordsOnPage) {
+        location.href = "/questions";
+        return;
+    }
 
-        var answerText = messageOutput.answer.text;
-         if (answerText.includes("|")) {
-            answerText = "";
-         }
-         var answerTextColumn = `<td>${answerText}</td>`
+    var receiverEmailColumn = `<td>${messageOutput.receiver.email}</td>`;
+    var questionTextColumn = `<td>${messageOutput.questionText}</td>`;
 
-         var iconsColumn = "<td class='icons-column'><a href='/questions/edit/?id=" + messageOutput.id + "' class='editQuestionModal'>" +
-         "<i class='fa-solid fa-pen-to-square' data-toggle='tooltip' title='Edit'></i></a>" +
-         "<a href='/questions/delete/?id=" + messageOutput.id + "' class='deleteQuestionModal'>"+
-         "<i class='fa-solid fa-trash-can' data-toggle='tooltip' title='Delete'></i></a></td>";
+    var answerType = messageOutput.answer.type;
+    answerType = answerType.replaceAll('_', ' ');
+    answerType = answerType.toLowerCase();
 
+    var answerTypeColumn = `<td>${answerType}</td>`;
 
-        var questionSelector = document.querySelector("#conversation-" + messageOutput.id);
-        if (questionSelector !== null) {
-            removeAllChildNodes(questionSelector);
-            $("#conversation-" + messageOutput.id).append(receiverEmailColumn + questionTextColumn + answerTypeColumn + answerTextColumn + iconsColumn);
-        } else {
-            $("#questionTable").append("<tr id='conversation-" + messageOutput.id + "'>" + receiverEmailColumn + questionTextColumn + answerTypeColumn + answerTextColumn + iconsColumn + "</tr>");
+    var answerText = messageOutput.answer.text;
+        if (answerText.includes("|")) {
+        answerText = "";
         }
+        var answerTextColumn = `<td>${answerText}</td>`
+
+        var iconsColumn = "<td class='icons-column'><a href='/questions/edit/?id=" + messageOutput.id + "' class='editQuestionModal'>" +
+        "<i class='fa-solid fa-pen-to-square' data-toggle='tooltip' title='Edit'></i></a>" +
+        "<a href='/questions/delete/?id=" + messageOutput.id + "' class='deleteQuestionModal'>"+
+        "<i class='fa-solid fa-trash-can' data-toggle='tooltip' title='Delete'></i></a></td>";
+
+
+    var questionSelector = document.querySelector("#conversation-" + messageOutput.id);
+    if (questionSelector !== null) {
+        removeAllChildNodes(questionSelector);
+        $("#conversation-" + messageOutput.id).append(receiverEmailColumn + questionTextColumn + answerTypeColumn + answerTextColumn + iconsColumn);
+    } else {
+        $("#questionTable").append("<tr id='conversation-" + messageOutput.id + "'>" + receiverEmailColumn + questionTextColumn + answerTypeColumn + answerTextColumn + iconsColumn + "</tr>");
+    }
+
+
+    var recordsCountString = $("#recordsCounts").text();
+    var recordsCounts = parseInt(recordsCountString, 10);
+    ++recordsCounts;
+    $("#recordsCounts").text(recordsCounts);
+
+    var totalRecordsCountString = $("#totalRecordsCount").text();
+    var totalRecordsCount = parseInt(totalRecordsCountString, 10);
+    ++totalRecordsCount;
+    $("#totalRecordsCount").text(totalRecordsCount);
+}
+
+function deleteConversation(id) {
+    var conversation = document.querySelector("#conversation-" + id);
+    removeAllChildNodes(conversation);
+    conversation.remove();
+
+    var recordsCountString = $("#recordsCounts").text();
+    var recordsCounts = parseInt(recordsCountString, 10);
+    --recordsCounts;
+    $("#recordsCounts").text(recordsCounts);
+
+    var totalRecordsCountString = $("#totalRecordsCount").text();
+    var totalRecordsCount = parseInt(totalRecordsCountString, 10);
+    --totalRecordsCount;
+    $("#totalRecordsCount").text(totalRecordsCount);
 }
 
 function removeAllChildNodes(parent) {
@@ -192,9 +241,4 @@ function removeAllChildNodes(parent) {
     }
 }
 
-function deleteConversation(id) {
-    var conversation = document.querySelector("#conversation-" + id);
-    removeAllChildNodes(conversation);
-    conversation.remove();
-}
 

@@ -1,54 +1,31 @@
 $(document).ready(function(){
 
     $("#ddAnswerType").change(function() {
-        var value = $(this).val();
+        var answerType = $(this).val();
 
-        var answer = $("#answer");
+        var answerText = $("#answer");
 
-        console.log(value);
-        switch (value) {
-            case "single line text":
-            case "multiline text":
-            case "date":
-                answer.prop("readonly", true);
-                break;
-            case "radio button":
-            case "checkbox":
-            case "combobox":
-                answer.prop("readonly", false);
-                break;
-        }
+        setAnswerTextVisibility(answerText, answerType);
     });
 
     $("#ddEditAnswerType").change(function() {
-        var value = $(this).val();
+        var answerType = $(this).val();
 
-        var answer = $("#editAnswer");
+        var answerText = $("#editAnswer");
 
-        console.log(value);
-        switch (value) {
-            case "single line text":
-            case "multiline text":
-            case "date":
-                answer.prop("readonly", true);
-                break;
-            case "radio button":
-            case "checkbox":
-            case "combobox":
-                answer.prop("readonly", false);
-                break;
-        }
+        setAnswerTextVisibility(answerText, answerType);
     });
 
     $("#questionTable").on("click", ".deleteQuestionModal", function(event) {
         event.preventDefault();
         var href = $(this).attr("href");
-         $.get(href, function(conversation, status) {
+         $.get(href, function(conversation) {
             $("#conversationId").val(conversation.id);
          });
 
          $("#deleteQuestionModal").modal()
     });
+
 
     $(".addQuestionModal").click(function() {
         var select = document.getElementById("ddUser");
@@ -63,7 +40,7 @@ $(document).ready(function(){
 
         var href = $(this).attr("href");
 
-        $.get(href, function(conversation, status) {
+        $.get(href, function(conversation) {
             $("#id").val(conversation.id);
             $("#answerId").val(conversation.answer.id);
             $("#ddEditUser > option").each(function() {
@@ -94,6 +71,23 @@ $(document).ready(function(){
         $("#editQuestionModal").modal()
     });
 });
+
+
+
+function setAnswerTextVisibility(answerText, answerType) {
+    switch (answerType) {
+        case "single line text":
+        case "multiline text":
+        case "date":
+            answerText.prop("readonly", true);
+            break;
+        case "radio button":
+        case "checkbox":
+        case "combobox":
+            answerText.prop("readonly", false);
+            break;
+    }
+}
 
 function addUsersToSelect(select) {
     if (select.children.length !== 0) {
