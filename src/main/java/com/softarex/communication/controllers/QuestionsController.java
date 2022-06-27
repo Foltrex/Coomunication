@@ -82,8 +82,6 @@ public class QuestionsController {
     @MessageMapping("/conversations/delete-question")
     public void deleteQuestion(Conversation conversation) throws ConversationServiceException {
         Conversation realConversation = conversationService.findById(conversation.getId());
-        Long receiverId = realConversation.getReceiver().getId();
-        Long senderId = realConversation.getSender().getId();
 
         conversationService.delete(realConversation);
 
@@ -93,6 +91,8 @@ public class QuestionsController {
                 .receiver(realConversation.getReceiver())
                 .build();
 
+        Long receiverId = deletedConversation.getReceiver().getId();
+        Long senderId = deletedConversation.getSender().getId();
         messagingTemplate.convertAndSend("/topic/messages/" + receiverId, deletedConversation);
         messagingTemplate.convertAndSend("/topic/messages/" + senderId, deletedConversation);
     }
@@ -107,7 +107,7 @@ public class QuestionsController {
 
         Conversation savedConversation = conversationService.save(conversation);
 
-        messagingTemplate.convertAndSend("/topic/messages/" + id, savedConversation);
+        messagingTemplate.convertAndSend("/topic/messages/" + receiver.getId(), savedConversation);
         messagingTemplate.convertAndSend("/topic/messages/" + sender.getId(), savedConversation);
     }
 
