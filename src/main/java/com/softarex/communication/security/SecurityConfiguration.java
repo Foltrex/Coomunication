@@ -24,6 +24,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String MAIN_PAGE = "/questions";
     private static final String LOGIN_PAGE = "/login";
 
+    private final String[] staticRecources = {"/css/**", "/images/**", "/js/**"};
+
     @Autowired
     private UserDetailsService userDetailsService;
 
@@ -42,8 +44,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(REGISTRATION_PAGE).not().fullyAuthenticated()
-                .antMatchers(MAIN_PAGE, "/").authenticated()
-                .anyRequest().permitAll()
+                .antMatchers(staticRecources).permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                     .loginPage(LOGIN_PAGE)
@@ -54,7 +56,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .and()
                 .rememberMe()
                     .tokenValiditySeconds(7 * 24 * 60 * 60)
-                    .key("AbcdefghiJklmNoPqRstUvXyz")
                     .and()
                 .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
