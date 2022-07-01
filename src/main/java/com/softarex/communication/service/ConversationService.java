@@ -27,6 +27,10 @@ public class ConversationService {
         this.conversationDao = conversationDao;
     }
 
+    public List<Conversation> findAll() {
+        return conversationDao.findAll();
+    }
+
     public Conversation findById(Long id) throws ConversationServiceException {
         return conversationDao.findById(id).orElseThrow(ConversationServiceException::new);
     }

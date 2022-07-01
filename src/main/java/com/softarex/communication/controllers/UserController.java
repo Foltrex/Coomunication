@@ -3,9 +3,15 @@ package com.softarex.communication.controllers;
 import com.softarex.communication.domain.User;
 import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.security.MessengerUserDetails;
+import com.softarex.communication.security.jwt.JwtTokenProvider;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,20 +37,41 @@ public class UserController {
     private static final String LOGIN_PAGE = "login";
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider tokenProvider;
 
-    UserController(UserService userService) {
+    public UserController(UserService userService, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
         this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
     }
 
-    @GetMapping("/login")
-    public String showLoginPage() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return LOGIN_PAGE;
+    @PostMapping(value = "/user/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<String> login(@RequestBody User user) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+        JSONObject jsonObject = new JSONObject();
+        if (authentication.isAuthenticated()) {
+            String email = user.getEmail();
+            String tokenValue = tokenProvider.createToken(user.getEmail());
+
+            jsonObject.put("name", authentication.getName());
+            jsonObject.put("authorities", authentication.getAuthorities());
+            jsonObject.put("token", tokenValue);
         }
 
-        return REDIRECT;
+        return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
     }
+//    @GetMapping("/login")
+//    public String showLoginPage() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+//            return LOGIN_PAGE;
+//        }
+//
+//        return REDIRECT;
+//    }
 
     @GetMapping("/registration")
     public String registerUser(Model model) {
