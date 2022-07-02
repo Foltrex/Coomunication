@@ -1,11 +1,26 @@
 import React, { useReducer } from 'react';
 import {connect, useStore } from 'react-redux';
-import {fetchQuestions} from '../../store/actions/questionActions';
+import {fetchQuestions} from '../../../store/actions/questionsAction';
 import {Table} from 'react-bootstrap';
+import PageSizeSelect from '../PageSizeSelect';
+import Pagination from '../Pagination';
+import { FaEdit } from "react-icons/fa";
 
-import '../../assets/css/Table.css';
+import '../../../assets/css/Table.css';
+import EditAnswerModal from './EditAnswerModal';
 
 class AnswerTable extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            showEditAnswerModal: false
+        }
+    }
+
+    handleEditAnswerModalClick() {
+        this.setState({showEditAnswerModal:!this.state.showEditAnswerModal});
+    }
+
     componentDidMount() {
         this.props.fetchQuestions();
     }
@@ -41,12 +56,26 @@ class AnswerTable extends React.Component {
                                             <td>{question.questionText}</td>
                                             <td>{question.answer.text}</td>
                                             <td className='icons-column'>
-                                                <a href=''><i className="fa-solid fa-pen-to-square" data-toggle="tooltip" title="Edit"></i></a>
+                                                <button 
+                                                    className='btn btn-link text-secondary' 
+                                                    data-toggle="modal"
+                                                    style={{fontSize: '20px'}}
+                                                    onClick={() => this.handleEditAnswerModalClick()}
+                                                >
+                                                    <FaEdit />
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
+                                    {this.state.showEditAnswerModal && <EditAnswerModal isVisible={this.state.showEditAnswerModal} changeVisability={() => this.handleEditAnswerModalClick()} />}
                                 </tbody>
                             </Table>
+
+                            <div className="d-flex justify-content-between align-items-center my-2">
+                                <div className='hint-text'>1-10 of 10</div>
+                                <Pagination />
+                                <PageSizeSelect />
+                            </div>
                         </div>
                     </div>
                 </div>
