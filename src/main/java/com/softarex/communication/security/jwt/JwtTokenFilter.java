@@ -1,45 +1,52 @@
 package com.softarex.communication.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import org.json.JSONObject;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
+import com.softarex.communication.security.MessengerUserDetails;
+import com.softarex.communication.security.MessengerUserDetailsService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
 
-public class JwtTokenFilter extends OncePerRequestFilter {
-    private static final String AUTHORIZATION_HEADER = "Authorization";
+@Slf4j
+@Component
+public class JwtTokenFilter extends GenericFilterBean {
+    public static final String AUTHORIZATION = "Authorization";
 
-    private JwtTokenProvider tokenProvider;
+    @Autowired
+    private JwtTokenProvider jwtProvider;
 
-    public JwtTokenFilter(JwtTokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
-    }
+    @Autowired
+    private MessengerUserDetailsService messengerUserDetailsService;
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        String token = request.getHeader(AUTHORIZATION_HEADER);
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        logger.info("do filter...");
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        if (token != null) {
-            Claims claims = tokenProvider.getClaimsFromToken(token);
-            if (!claims.getExpiration().before(new Date())) {
-                Authentication authentication = tokenProvider.getAuthentication(claims.getSubject());
-                if (authentication.isAuthenticated()) {
-                    SecurityContext securityContext = SecurityContextHolder.getContext();
-                    securityContext.setAuthentication(authentication);
-                }
-            }
+        String token = request.getHeader(AUTHORIZATION);
+        log.info(token);
+        if (token != null && jwtProvider.validateToken(token)) {
+            String userLogin = jwtProvider.getLoginFromToken(token);
+
+            MessengerUserDetails customUserDetails = messengerUserDetailsService.loadUserByUsername(userLogin);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            response.setHeader(AUTHORIZATION, token);
         }
-
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 }

@@ -1,13 +1,11 @@
 import { combineReducers } from 'redux';
 import authReducer from './authReducer';
 import userReducer from './userReducer';
-import questionReducer from './questionReducer';
-import questionsReducer from './questionsReducer';
+import conversationReducer from './conversationReducer';
 
 const rootReducer = combineReducers({
     user: userReducer,
-    questions: questionsReducer,
-    question: questionReducer,
+    conversation: conversationReducer,
     auth: authReducer,
 });
 

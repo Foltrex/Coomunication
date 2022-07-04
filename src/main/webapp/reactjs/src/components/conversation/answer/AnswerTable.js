@@ -1,10 +1,10 @@
 import React, { useReducer } from 'react';
 import {connect, useStore } from 'react-redux';
-import {fetchQuestions} from '../../../store/actions/questionsAction';
 import {Table} from 'react-bootstrap';
 import PageSizeSelect from '../PageSizeSelect';
 import Pagination from '../Pagination';
 import { FaEdit } from "react-icons/fa";
+import axios from 'axios';
 
 import '../../../assets/css/Table.css';
 import EditAnswerModal from './EditAnswerModal';
@@ -13,6 +13,8 @@ class AnswerTable extends React.Component {
     constructor() {
         super();
         this.state = {
+            conversations: [],
+
             showEditAnswerModal: false
         }
     }
@@ -22,11 +24,36 @@ class AnswerTable extends React.Component {
     }
 
     componentDidMount() {
-        this.props.fetchQuestions();
+        this.findAllBooks();
+    }
+
+    findAllBooks() {
+        axios
+        .get('http://localhost:8080/answers')
+        .then(response => response.data)
+        .then(data => {
+            data.forEach(conversation => {
+                let answerType = conversation.answer.type;
+                answerType = answerType.toLowerCase();
+                answerType = answerType.replace(/_/g, ' ');
+                conversation.answer.type = answerType;
+
+                let answerText = conversation.answer.text;
+                conversation.answer.text = (!answerText.includes('|')) ? answerText : '';
+            });
+
+            this.setState({
+                conversations: data
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        })
+
     }
 
     render() {
-        const questions = this.props.questionsData.questions;
+        const conversations = this.state.conversations;
 
         return (
             <>
@@ -50,11 +77,11 @@ class AnswerTable extends React.Component {
                                 </tr>
                                 </thead>
                                 <tbody id="answerTable">
-                                    {questions.map(question => (
-                                        <tr id={'question-' + question.id}>
-                                            <td>{question.sender.email}</td>
-                                            <td>{question.questionText}</td>
-                                            <td>{question.answer.text}</td>
+                                    {conversations.map(conversation => (
+                                        <tr id={'conversation-' + conversation.id}>
+                                            <td>{conversation.sender.email}</td>
+                                            <td>{conversation.questionText}</td>
+                                            <td>{conversation.answer.text}</td>
                                             <td className='icons-column'>
                                                 <button 
                                                     className='btn btn-link text-secondary' 
@@ -90,10 +117,5 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchQuestions: () => dispatch(fetchQuestions())
-    };
-};
 
-export default connect(mapStateToProps, mapDispatchToProps) (AnswerTable);
+export default AnswerTable;

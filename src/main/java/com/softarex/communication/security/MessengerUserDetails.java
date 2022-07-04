@@ -66,4 +66,11 @@ public class MessengerUserDetails implements UserDetails {
         String surname = user.getSurname();
         return String.format("%s %s", name, surname);
     }
+
+    @Override
+    public String toString() {
+        return "MessengerUserDetails{" +
+                "user=" + user +
+                '}';
+    }
 }

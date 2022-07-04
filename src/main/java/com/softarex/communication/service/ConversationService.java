@@ -1,6 +1,7 @@
 package com.softarex.communication.service;
 
 import com.softarex.communication.dao.ConversationDao;
+import com.softarex.communication.domain.Answer;
 import com.softarex.communication.domain.Conversation;
 import com.softarex.communication.domain.User;
 import com.softarex.communication.exception.ConversationServiceException;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
@@ -55,6 +57,12 @@ public class ConversationService {
         Page<Conversation> pageResult = conversationDao.findByReceiver(user, paging);
 
         return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
+    }
+
+    public List<String> findAllAnswerTypes() {
+        return Stream.of(Answer.Type.values())
+                .map(Answer.Type::getType)
+                .toList();
     }
 
     public long countQuestionsFromUser(User user) {

@@ -1,6 +1,6 @@
 package com.softarex.communication.security;
 
-import com.softarex.communication.security.jwt.JwtTokenConfigurer;
+import com.softarex.communication.security.jwt.JwtTokenFilter;
 import com.softarex.communication.security.jwt.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +17,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import java.util.Arrays;
 
@@ -32,6 +34,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtTokenFilter jwtFilter;
 
     @Autowired
     private JwtTokenProvider tokenProvider;
@@ -64,14 +69,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        http.cors().and()
+                    .csrf().disable()
+                    .httpBasic().disable()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                 .authorizeRequests()
-                    // .antMatchers("/user/login").permitAll()
-                    // .anyRequest().authenticated();
-                    .anyRequest().permitAll();
-        http.apply(new JwtTokenConfigurer(tokenProvider));
+                     .antMatchers("/user/*").permitAll()
+                     .anyRequest().authenticated()
+                .and()
+                    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+//        .anyRequest().permitAll();
+//        http.apply(new JwtTokenConfigurer(tokenProvider));
     }
 }

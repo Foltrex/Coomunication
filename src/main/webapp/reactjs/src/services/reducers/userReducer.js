@@ -1,25 +1,24 @@
-import {FETCH_QUESTIONS_REQUEST, FETCH_QUESTIONS_SUCCESS, FETCH_QUESTIONS_FAILURE} from '../types/questionTypes';
-
+import * as UT from '../types/userTypes';
 
 const initialState = {
-    questions: [],
+    users: [],
     error: ''
 }
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case FETCH_QUESTIONS_REQUEST:
+        case UT.FETCH_USER_REQUEST:
             return {
                 ...state
             };
-        case FETCH_QUESTIONS_SUCCESS:
+        case UT.USER_SUCCESS:
             return {
-                questions: action.payload,
+                users: action.payload,
                 error: ''
             };
-        case FETCH_QUESTIONS_FAILURE:
+        case UT.USER_FAILURE:
             return {
-                questions: [],
+                users: [],
                 error: action.payload
             };
         default:

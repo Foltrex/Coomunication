@@ -1,8 +1,7 @@
 import React, { useReducer, useState } from 'react';
 import {connect, useStore } from 'react-redux';
-import {fetchQuestions} from '../../../store/actions/questionsAction';
 import {Table} from 'react-bootstrap';
-import AddQuestionModal from './AddQuestionModal';
+import QuestionModal from './QuestionModal';
 import EditQuestionModal from './EditQuestionModal';
 import DeleteQuestionModal from './DeleteQuestionModal';
 import PageSizeSelect from '../PageSizeSelect';
@@ -10,6 +9,7 @@ import Pagination from '../Pagination';
 import { FaEdit } from "react-icons/fa";
 import { GoPlus } from 'react-icons/go';
 import { BsTrashFill } from "react-icons/bs";
+import axios from 'axios';
 
 import '../../../assets/css/Table.css';
 
@@ -17,6 +17,8 @@ class QuestionTable extends React.Component {
     constructor() {
         super();
         this.state = {
+            conversations: [],
+
             showAddQuestionModal:false,
             showEditQuestionModal:false,
             showDeleteQuestionModal:false
@@ -36,11 +38,36 @@ class QuestionTable extends React.Component {
     }
 
     componentDidMount() {
-        this.props.fetchQuestions();
+        this.findAllBooks();
+    }
+
+    findAllBooks() {
+        axios
+        .get('http://localhost:8080/questions')
+        .then(response => response.data)
+        .then(data => {
+            data.forEach(conversation => {
+                let answerType = conversation.answer.type;
+                answerType = answerType.toLowerCase();
+                answerType = answerType.replace(/_/g, ' ');
+                conversation.answer.type = answerType;
+
+                let answerText = conversation.answer.text;
+                conversation.answer.text = (!answerText.includes('|')) ? answerText : '';
+            });
+            
+            this.setState({
+                conversations: data
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        })
+
     }
 
     render() {
-        const questions = this.props.questionsData.questions;
+        const conversations = this.state.conversations;
 
         return (
         <>
@@ -62,7 +89,7 @@ class QuestionTable extends React.Component {
                                     <GoPlus style={{fontSize: '20px'}} />
                                     Add question
                                 </button>
-                               {this.state.showAddQuestionModal && <AddQuestionModal isVisible={this.state.showAddQuestionModal}  changeVisability={() => this.handleAddQuestionModalClick()}/>}
+                               {this.state.showAddQuestionModal && <QuestionModal isVisible={this.state.showAddQuestionModal}  closeQuestionModal={() => this.handleAddQuestionModalClick()}/>}
                             </div>
                             </div>
                         </div>
@@ -78,12 +105,12 @@ class QuestionTable extends React.Component {
                             </tr>
                             </thead>
                             <tbody id="questionTable">
-                                {questions.map(question => (
-                                    <tr id={'question-' + question.id}>
-                                        <td>{question.receiver.email}</td>
-                                        <td>{question.questionText}</td>
-                                        <td>{question.answer.type}</td>
-                                        <td>{question.answer.text}</td>
+                                {conversations.map(conversation => (
+                                    <tr id={'conversation-' + conversation.id}>
+                                        <td>{conversation.receiver.email}</td>
+                                        <td>{conversation.questionText}</td>
+                                        <td>{conversation.answer.type}</td>
+                                        <td>{conversation.answer.text}</td>
                                         <td className='icons-column'>
                                             <button 
                                                 className='btn btn-link text-secondary' 
@@ -123,16 +150,5 @@ class QuestionTable extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        questionsData: state.questions
-    };
-};
 
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchQuestions: () => dispatch(fetchQuestions())
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps) (QuestionTable);
+export default QuestionTable;

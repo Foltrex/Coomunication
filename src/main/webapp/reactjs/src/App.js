@@ -16,7 +16,7 @@ function App() {
     <div className='jumbotron'>
       <Router className="App">
         <Routes>
-          <Route path='/' element={<NavigationBar />}>
+          <Route path='/' element={<NavigationBar />} >
             <Route index element={<QuestionTable />} />
             <Route path='questions' element={<QuestionTable />} />
             <Route path='answers' element={<AnswerTable />} />
