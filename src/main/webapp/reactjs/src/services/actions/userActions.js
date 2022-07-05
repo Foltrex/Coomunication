@@ -3,33 +3,66 @@ import axios from 'axios';
 
 export const fetchUsers = () => {
     return dispatch => {
-        dispatch(fetchUserRequest());
+        dispatch({
+            type: UT.FETCH_USERS_REQUEST
+        });
         axios.get('http://localhost:8080/users')
             .then(response => {
-                dispatch(userSuccess(response.data));
+                dispatch({
+                    type: UT.USERS_SUCCESS,
+                    payload: response.data
+                });
             })
             .catch(error => {
-                dispatch(userFailure(error.message));
+                dispatch({
+                    type: UT.USERS_FAILURE,
+                    payload: error
+                });
             });
     };
 };
 
-const fetchUserRequest = () => {
-    return {
-        type: UT.FETCH_USER_REQUEST
+export const fetchUser = email => {
+    return dispatch => {
+        dispatch({
+            type: UT.FETCH_USER_REQUEST
+        });
+        axios
+            .get('http://localhost:8080/users/' + email)
+            .then(response => {
+                dispatch({
+                    type: UT.USER_SUCCESS,
+                    payload: response.data
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: UT.USER_FAILURE,
+                    payload: error
+                });
+            });
     };
-};
+}
 
-const userSuccess = users => {
-    return {
-        type: UT.USER_SUCCESS,
-        payload: users
+export const updateUser = user => {
+    console.log(user)
+    return dispatch => {
+        dispatch({
+            type: UT.UPDATE_USER_REQUEST
+        });
+        axios
+            .put('http://localhost:8080/users', user)
+            .then(response => {
+                dispatch({
+                    type: UT.USER_SUCCESS,
+                    payload: response.data
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: UT.USER_FAILURE,
+                    payload: error
+                });
+            });
     };
-};
-
-const userFailure = error => {
-    return {
-        type: UT.USER_FAILURE,
-        payload: error
-    };
-};
+}

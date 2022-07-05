@@ -7,20 +7,24 @@ import { FaEdit } from "react-icons/fa";
 import axios from 'axios';
 
 import '../../../assets/css/Table.css';
-import EditAnswerModal from './EditAnswerModal';
+import AnswerModal from './AnswerModal';
 
 class AnswerTable extends React.Component {
     constructor() {
         super();
         this.state = {
             conversations: [],
+            currentConversationId: '',
 
-            showEditAnswerModal: false
+            showAnswerModal: false
         }
     }
 
-    handleEditAnswerModalClick() {
-        this.setState({showEditAnswerModal:!this.state.showEditAnswerModal});
+    handleAnswerModalClick(id) {
+        this.setState({
+            currentConversationId: id,
+            showAnswerModal:!this.state.showAnswerModal
+        });
     }
 
     componentDidMount() {
@@ -87,14 +91,14 @@ class AnswerTable extends React.Component {
                                                     className='btn btn-link text-secondary' 
                                                     data-toggle="modal"
                                                     style={{fontSize: '20px'}}
-                                                    onClick={() => this.handleEditAnswerModalClick()}
+                                                    onClick={() => this.handleAnswerModalClick(conversation.id)}
                                                 >
                                                     <FaEdit />
                                                 </button>
                                             </td>
                                         </tr>
                                     ))}
-                                    {this.state.showEditAnswerModal && <EditAnswerModal isVisible={this.state.showEditAnswerModal} changeVisability={() => this.handleEditAnswerModalClick()} />}
+                                    {this.state.showAnswerModal && <AnswerModal id={this.state.currentConversationId} isVisible={this.state.showAnswerModal} closeAnswerModal={() => this.handleAnswerModalClick()} />}
                                 </tbody>
                             </Table>
 
@@ -113,9 +117,8 @@ class AnswerTable extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        questionsData: state.questions
+        conversation: state.conversation
     };
 };
-
 
 export default AnswerTable;

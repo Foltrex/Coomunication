@@ -13,7 +13,6 @@ const reducer = (state = initialState, action) => {
       };
     case SUCCESS:
     case FAILURE:
-      console.log("fulname from auth reducer: ", action.payload.user)
       return {
         user: action.payload.user
       };

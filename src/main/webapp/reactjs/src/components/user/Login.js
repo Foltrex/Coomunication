@@ -31,7 +31,6 @@ const Login = (props) => {
     const validateUser = () => {
         dispatch(authenticateUser(user.email, user.password))
             .then((response) => {
-                console.log("response from login ", response);
                 localStorage.setItem('jwt_token', response.token);
                 navigate('/')
             })

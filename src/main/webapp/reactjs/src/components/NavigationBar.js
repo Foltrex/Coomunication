@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -6,24 +6,27 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import {NavLink, Link, Outlet} from 'react-router-dom';
 import {useSelector} from 'react-redux';
+import store from '../services/store';
 
 import logo from '../assets/images/logo.png'
 
 
 const NavigationBar = () => {
     const auth = useSelector(state => state.auth);
+    const name = (auth.user && auth.user.name) || localStorage.getItem('name');
+    const surname = (auth.user && auth.user.surname) || localStorage.getItem('surname');
 
-    const fullName = `${auth.user.name} ${auth.user.surname}`;
+    const fullName = `${name} ${surname}`;
 
     const navLinkStyle = {
         textDecoration: 'none',
         margin: 'auto 7px',
         fontSize: '16px'
     }
-//localStorage.getItem('jwt_token')
+    
     return (
         <>
-            {auth.user &&
+            {(auth.user || localStorage.getItem('jwt_token'))  &&
             <Navbar bg="white" expand="lg" className='border-bottom shadow-sm'>
                 <Container>
                     <Link to={'/questions'} className='navbar-brand'>

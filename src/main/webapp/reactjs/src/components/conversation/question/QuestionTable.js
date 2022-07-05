@@ -2,7 +2,6 @@ import React, { useReducer, useState } from 'react';
 import {connect, useStore } from 'react-redux';
 import {Table} from 'react-bootstrap';
 import QuestionModal from './QuestionModal';
-import EditQuestionModal from './EditQuestionModal';
 import DeleteQuestionModal from './DeleteQuestionModal';
 import PageSizeSelect from '../PageSizeSelect';
 import Pagination from '../Pagination';
@@ -18,10 +17,11 @@ class QuestionTable extends React.Component {
         super();
         this.state = {
             conversations: [],
+            currentConversationId: '',
 
             showAddQuestionModal:false,
             showEditQuestionModal:false,
-            showDeleteQuestionModal:false
+            showDeleteQuestionModal:false,
         }
     }
 
@@ -29,12 +29,18 @@ class QuestionTable extends React.Component {
         this.setState({showAddQuestionModal:!this.state.showAddQuestionModal});
     }
 
-    handleEditQuestionModalClick() {
-        this.setState({showEditQuestionModal:!this.state.showEditQuestionModal});
+    handleEditQuestionModalClick(id) {
+        this.setState({
+            currentConversationId: id,
+            showEditQuestionModal:!this.state.showEditQuestionModal
+        });
     }
 
-    handleDeleteQuestionModalClick() {
-        this.setState({showDeleteQuestionModal:!this.state.showDeleteQuestionModal});
+    handleDeleteQuestionModalClick(id) {
+        this.setState({
+            currentConversationId: id,
+            showDeleteQuestionModal:!this.state.showDeleteQuestionModal
+        });
     }
 
     componentDidMount() {
@@ -64,6 +70,13 @@ class QuestionTable extends React.Component {
             console.log(error);
         })
 
+    }
+
+    hasntAnswer(answer) {
+        var text = answer.text;
+        return !text || text.includes('|') 
+            || text.includes('\n') 
+            || text.includes(',');
     }
 
     render() {
@@ -112,28 +125,28 @@ class QuestionTable extends React.Component {
                                         <td>{conversation.answer.type}</td>
                                         <td>{conversation.answer.text}</td>
                                         <td className='icons-column'>
-                                            <button 
+                                            {this.hasntAnswer(conversation.answer) && <button 
                                                 className='btn btn-link text-secondary' 
                                                 data-toggle="modal"
                                                 style={{fontSize: '20px'}}
-                                                onClick={() => this.handleEditQuestionModalClick()}
+                                                onClick={() => this.handleEditQuestionModalClick(conversation.id)}
                                             >
                                                 <FaEdit />
-                                            </button>
+                                            </button>}
 
                                             <button 
                                                 className='btn btn-link text-secondary' 
                                                 data-toggle="modal"
                                                 style={{fontSize: '20px'}}
-                                                onClick={() => this.handleDeleteQuestionModalClick()}
+                                                onClick={() => this.handleDeleteQuestionModalClick(conversation.id)}
                                             >
                                                 <BsTrashFill />
                                             </button>
                                         </td>
                                     </tr>
                                 ))}
-                                {this.state.showEditQuestionModal && <EditQuestionModal isVisible={this.state.showEditQuestionModal} changeVisability={() => this.handleEditQuestionModalClick()} />}
-                                {this.state.showDeleteQuestionModal && <DeleteQuestionModal isVisible={this.state.showDeleteQuestionModal} changeVisability={() => this.handleDeleteQuestionModalClick()} />}
+                                {this.state.showEditQuestionModal && <QuestionModal id={this.state.currentConversationId} isVisible={this.state.showEditQuestionModal} closeQuestionModal={() => this.handleEditQuestionModalClick()} />}
+                                {this.state.showDeleteQuestionModal && <DeleteQuestionModal id={this.state.currentConversationId} isVisible={this.state.showDeleteQuestionModal} closeQuestionModal={() => this.handleDeleteQuestionModalClick()} />}
                             </tbody>
                         </Table>
                         
@@ -150,5 +163,16 @@ class QuestionTable extends React.Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        conversationObject: state.conversation
+    };
+};
 
-export default QuestionTable;
+const mapDispatchToProps = dispatch => {
+    return {
+        // fetchConversation: (id) => dispatch(fetchConversation(id))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (QuestionTable);

@@ -34,8 +34,6 @@ public class UserController {
         this.tokenProvider = tokenProvider;
     }
 
-    // TODO: make barear token
-
     @PostMapping("/user/login")
     public String login(@RequestBody User user, HttpServletResponse response) throws UserServiceException {
         User loggedUser = userService.findByEmail(user.getEmail());
@@ -57,5 +55,16 @@ public class UserController {
     public List<User> findByUserIsNot(Principal loggedUser) throws UserServiceException {
         User currentLoggedUser = userService.findByEmail(loggedUser.getName());
         return userService.findByUserIsNot(currentLoggedUser);
+    }
+
+    @GetMapping("/users/{email}")
+    public User findByUser(@PathVariable String email) throws UserServiceException {
+        log.info(email);
+        return userService.findByEmail(email);
+    }
+
+    @PutMapping("/users")
+    public User update(@RequestBody User user) throws UserServiceException {
+        return userService.save(user);
     }
 }

@@ -3,6 +3,8 @@ import './App.css';
 import React  from 'react';
 import NavigationBar from './components/NavigationBar';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute';
+
 import QuestionTable from './components/conversation/question/QuestionTable';
 import AnswerTable from './components/conversation/answer/AnswerTable';
 import Login from './components/user/Login';
@@ -16,13 +18,15 @@ function App() {
     <div className='jumbotron'>
       <Router className="App">
         <Routes>
-          <Route path='/' element={<NavigationBar />} >
+          <Route path='/login' element={<Login />} />
+
+          <Route path='/' element={<PrivateRoute><NavigationBar /></PrivateRoute>} >
             <Route index element={<QuestionTable />} />
             <Route path='questions' element={<QuestionTable />} />
             <Route path='answers' element={<AnswerTable />} />
             <Route path='register' element={<Register />} />
-            <Route path='login' element={<Login />} />
             <Route path='user'>
+              <Route index element={<EditUser />} />
               <Route path='edit' element={<EditUser />} />
               <Route path='delete' element={<DeleteUser />} />
               <Route path='logout' element={<Login />} />

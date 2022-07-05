@@ -1,37 +1,39 @@
-import * as BT from "../types/conversationTypes";
+import * as CT from "../types/conversationTypes";
 
 const initialState = {
+    conversations: [],
     conversation: '',
     error: ''
 };
 
 const reducer = (state = initialState, action) => {
     switch(action.type) {
-        case BT.SAVE_CONVERSATION_REQUEST:
-        case BT.FETCH_CONVERSATION_REQUEST:
+        case CT.SAVE_CONVERSATION_REQUEST:
+        case CT.FETCH_CONVERSATION_REQUEST:
+        case CT.FETCH_CONVERSATIONS_REQUEST:
             return {
                 ...state
             }
-        case BT.CONVERSATION_SUCCESS:
+        case CT.CONVERSATION_SUCCESS:
             return {
                 conversation: action.payload,
                 error: ''
             };
-        case BT.CONVERSATION_FAILURE:
+        case CT.CONVERSATION_FAILURE:
             return {
                 conversation: '',
                 error: action.payload
             };
-        case BT.ANSWER_TYPE_SUCCESS:
+        case CT.CONVERSATIONS_SUCCESS:
             return {
-                answerTypes: action.payload,
+                conversations: action.payload,
                 error: ''
             };
-        case BT.ANSWER_TYPE_FAILURE:
+        case CT.CONVERSATIONS_FAILURE:
             return {
-                answerTypes: '',
+                conversations: '',
                 error: action.payload
-            };
+            }
         default:
             return state;
     }
