@@ -130,8 +130,8 @@ class AnswerTable extends React.Component {
 
     render() {
         var { conversations, currentPage, totalPages, totalElements, currentPageSize, numberOfElements } = this.state;
-        var firstPageRecordNumber = (currentPage - 1) * currentPageSize + 1;
-        var lastPageRecordNumber = (firstPageRecordNumber - 1) + numberOfElements;
+        var firstPageRecordNumber = totalElements !== 0 ? (currentPage - 1) * currentPageSize + 1 : 0;
+        var lastPageRecordNumber = totalElements !== 0 ? (firstPageRecordNumber - 1) + numberOfElements : 0;
 
         if (currentPageSize === -1) {
             currentPageSize = totalElements;

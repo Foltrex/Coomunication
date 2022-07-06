@@ -11,6 +11,7 @@ const reducer = (state = initialState, action) => {
         case UT.FETCH_USERS_REQUEST:
         case UT.FETCH_USER_REQUEST:
         case UT.UPDATE_USER_REQUEST:
+        case UT.DELETE_USER_REQUEST:
             return {
                 ...state
             };

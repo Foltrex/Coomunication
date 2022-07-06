@@ -1,11 +1,13 @@
 package com.softarex.communication.controllers;
 
+import com.softarex.communication.domain.Conversation;
 import com.softarex.communication.domain.User;
 import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.security.jwt.JwtTokenProvider;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +27,11 @@ public class UserController {
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
 
-    public UserController(UserService userService, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
+    @Autowired
+    public UserController(UserService userService, JwtTokenProvider tokenProvider) {
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
     }
 
@@ -66,5 +67,10 @@ public class UserController {
     @PutMapping("/users")
     public User update(@RequestBody User user) throws UserServiceException {
         return userService.save(user);
+    }
+
+    @DeleteMapping("/user/delete/{id}")
+    public void delete(@PathVariable Long id) {
+        userService.delete(id);
     }
 }

@@ -18,8 +18,8 @@ import java.util.stream.Stream;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
-@Service
 @Slf4j
+@Service
 @Transactional(propagation = REQUIRES_NEW)
 public class ConversationService {
 
@@ -67,8 +67,8 @@ public class ConversationService {
                 .toList();
     }
 
-    public void delete(Conversation conversation) {
-        conversationDao.delete(conversation);
+    public void delete(Long id) {
+        conversationDao.deleteById(id);
     }
 
     public Conversation save(Conversation conversation) {

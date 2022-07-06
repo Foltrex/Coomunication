@@ -45,7 +45,6 @@ export const fetchUser = email => {
 }
 
 export const updateUser = user => {
-    console.log(user)
     return dispatch => {
         dispatch({
             type: UT.UPDATE_USER_REQUEST
@@ -69,4 +68,28 @@ export const updateUser = user => {
                 });
             });
     };
+}
+
+export const deleteUser = id => {
+    return dispatch => {
+        dispatch({
+            type: UT.DELETE_USER_REQUEST
+        });
+        axios
+            .delete('http://localhost:8080/user/delete/' + id)
+            .then(response => {
+                dispatch({
+                    type: UT.USER_SUCCESS,
+                    payload: response.data
+                });
+
+                localStorage.clear();
+            })
+            .catch(error => {
+                dispatch({
+                    type: UT.USER_FAILURE,
+                    payload: error
+                });
+            });
+    }
 }

@@ -8,21 +8,18 @@ import bcrypt from 'bcryptjs';
 class EditUser extends React.Component {
     constructor(props) {
         super(props);
-        this.state = this.#initialState;
         this.state = {
+            id: '',
+            name: '',
+            surname: '',
+            email: '',
+            phoneNumber: '',
+            password: '',
+
             showAlerts: false,
             errorMessage: ''
         }
     }
-
-    #initialState = {
-        id: '',
-        name: '',
-        surname: '',
-        email: '',
-        phoneNumber: '',
-        password: ''
-    };
 
     setshowAlerts(value) {
         this.setState({showAlerts: value});
@@ -92,6 +89,7 @@ class EditUser extends React.Component {
     render() {
         const { name, surname, email, phoneNumber } = this.state;
         const { showAlerts, errorMessage } = this.state;
+        
         return (
             <>
                 <div className='mt-4'>
@@ -110,7 +108,6 @@ class EditUser extends React.Component {
                             onClose={() => this.setshowAlerts(false)} 
                             dismissible
                             className='mt-1 px-4'
-                            // check this part with internet connection
                         >
                             {errorMessage}
                         </Alert>

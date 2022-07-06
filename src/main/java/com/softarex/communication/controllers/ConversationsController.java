@@ -8,6 +8,7 @@ import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class ConversationsController {
     private final ConversationService conversationService;
     private final UserService userService;
 
+    @Autowired
     public ConversationsController(ConversationService conversationService, UserService userService) {
         this.conversationService = conversationService;
         this.userService = userService;
@@ -77,5 +79,10 @@ public class ConversationsController {
         conversation.setReceiver(receiver);
 
         return conversationService.save(conversation);
+    }
+
+    @DeleteMapping("/conversation/delete/{id}")
+    public void delete(@PathVariable Long id) throws ConversationServiceException {
+        conversationService.delete(id);
     }
 }

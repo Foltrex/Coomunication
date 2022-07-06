@@ -9,6 +9,7 @@ const initialState = {
 const reducer = (state = initialState, action) => {
     switch(action.type) {
         case CT.SAVE_CONVERSATION_REQUEST:
+        case CT.DELETE_CONVERSATION_REQUEST:
         case CT.FETCH_CONVERSATION_REQUEST:
         case CT.FETCH_CONVERSATIONS_REQUEST:
             return {

@@ -9,7 +9,6 @@ export const saveConversation = conversation => {
         axios
             .post('http://localhost:8080/conversation/save', conversation)
             .then(response => {
-                console.log(response.data)
                 dispatch(conversationSuccess(response.data));
             })
             .catch(error => {
@@ -17,6 +16,22 @@ export const saveConversation = conversation => {
             });
     };
 };
+
+export const deleteConversation = id => {
+    return dispatch => {
+        dispatch({
+            type: CT.DELETE_CONVERSATION_REQUEST
+        });
+        axios
+            .delete('http://localhost:8080/conversation/delete/' + id)
+            .then(response => {
+                dispatch(conversationSuccess(response.data));
+            })
+            .catch(error => {
+                dispatch(conversationFailure(error))
+            })
+    };
+}
 
 export const fetchConversation = id => {
     return dispatch => {
@@ -87,7 +102,6 @@ export const fetchAnswers = (pageNo, pageSize) => {
             });
     };
 }
-
 
 const conversationSuccess = conversation => {
     return {

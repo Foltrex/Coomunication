@@ -9,21 +9,18 @@ import {fetchAnswerTypes} from '../../../services/actions/answerActions';
 class QuestionModal extends React.Component {
     constructor(props) {
         super(props);
-        this.state = this.#initialState;
         this.state = {
+            id: '',
+            sender: '',
+            receiver: '',
+            questionText: '',
+            answer: '',
+
             answerTypes: [],
             users: [],
 
             hasOption: true
         }
-    }
-
-    #initialState = {
-        id: '',
-        sender: '',
-        receiver: '',
-        questionText: '',
-        answer: ''
     }
 
     componentDidMount() {
