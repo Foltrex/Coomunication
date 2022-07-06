@@ -147,18 +147,13 @@ class QuestionTable extends React.Component {
     hasntAnswer(answer) {
         var text = answer.text;
         return !text || text.includes('|') 
-            || text.includes('\n') 
-            || text.includes(',');
+            || text.includes('\n');
     }
 
     render() {
         var { conversations, currentPage, totalPages, totalElements, currentPageSize, numberOfElements } = this.state;
         var firstPageRecordNumber = (currentPage - 1) * currentPageSize + 1;
         var lastPageRecordNumber = (firstPageRecordNumber - 1) + numberOfElements;
-
-        if (currentPageSize === -1) {
-            currentPageSize = totalElements;
-        }
 
         var pageLinks = this.buildPagination();
 
@@ -226,14 +221,14 @@ class QuestionTable extends React.Component {
                                     </tr>
                                 ))}
                                 {this.state.showEditQuestionModal && <QuestionModal id={this.state.currentConversationId} isVisible={this.state.showEditQuestionModal} closeQuestionModal={() => this.handleEditQuestionModalClick()} />}
-                                {this.state.showDeleteQuestionModal && <DeleteQuestionModal id={this.state.currentConversationId} isVisible={this.state.showDeleteQuestionModal} closeQuestionModal={() => this.handleDeleteQuestionModalClick()} />}
+                                {this.state.showDeleteQuestionModal && <DeleteQuestionModal id={this.state.currentConversationId} isVisible={this.state.showDeleteQuestionModal} closeDeleteQuestionModal={() => this.handleDeleteQuestionModalClick()} />}
                             </tbody>
                         </Table>
                         
                         <div className="d-flex justify-content-between align-items-center my-2">
                             <div className='hint-text'>
                                 {firstPageRecordNumber} 
-                                <span>&mdash;</span>  
+                                <span>-</span>  
                                 {lastPageRecordNumber} of {totalElements}</div>
 
                             <nav aria-label="...">

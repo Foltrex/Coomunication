@@ -13,6 +13,7 @@ class EditAnswerModal extends React.Component {
 
     #initialState = {
         conversation: '',
+        answers: [],
 
         answerBox: ''
     }
@@ -33,11 +34,38 @@ class EditAnswerModal extends React.Component {
 
                 this.setState({answerBox: this.buildAnswerBox(_conversation)});
             }
-        }, 200)
+        }, 150)
+    }
+
+    saveConversation = e => {
+        e.preventDefault();
+        let {conversation} = this.state;
+        let {answer} = conversation;
+        const {answers} = this.state;
+
+        answer.text = e.target.answerText.value || answers.join(', ') || '';
+        conversation.answer = answer;
+
+        this.props.saveConversation(conversation);
+        this.props.closeAnswerModal();
+    }
+
+    handleAnswerChange = (e) => {
+        const { value, checked } = e.target;
+        const { answers } = this.state;
+         
+        if (checked) {
+          this.setState({
+            answers: [...answers, value]
+          });
+        } else {
+          this.setState({
+            answers: answers.filter((e) => e !== value)
+          });
+        }
     }
 
     buildAnswerBox = (conversation) => {
-        console.log(conversation)
         const {answer} = conversation;
         const type = answer && answer.type;
         
@@ -66,8 +94,14 @@ class EditAnswerModal extends React.Component {
 
     buildCheckBoxes = (answer) => {
         const answerList = this.splitAnswer(answer);
-        console.log(answerList)
-        return <div/>
+        return answerList.map(option => {
+            return <div class="form-check">
+                        <input name='answerText' class="form-check-input" type="checkbox" onChange={this.handleAnswerChange} value={option}/>
+                        <label class="form-check-label">
+                            {option}
+                        </label>
+                    </div>;
+        });
     }
 
     buildTextArea = () => {
@@ -76,14 +110,21 @@ class EditAnswerModal extends React.Component {
 
     buildRadioButtons = (answer) => {
         const answerList = this.splitAnswer(answer);
-        console.log(answerList)
-        return <div/>
+        return answerList.map(option => {
+            return <div class="form-check">
+                        <input name="answerText" class="form-check-input" type="radio" onChange={this.handleAnswerChange} value={option} />
+                        <label class="form-check-label">
+                            {option}
+                        </label>
+                    </div>
+        });
     }
 
     buildCombobox = (answer) => {
         const answerList = this.splitAnswer(answer);
-        console.log(answerList)
-        return <div/>
+        var answerOptions = answerList.map(option => <option value={option}>{option}</option>);
+
+        return <><input class='form-control' name='answerText' type='text' list='answerOptions' /> {answerOptions}<datalist id='answerOptions'></datalist></>;
     }
 
     buildDate = () => {
@@ -108,9 +149,9 @@ class EditAnswerModal extends React.Component {
                     onHide={()=>this.props.closeAnswerModal()}
                     style={{marginTop: "10%"}}
                 > 
-                    <Form>
+                    <Form onSubmit={this.saveConversation}>
                         <Modal.Header closeButton style={{background: '#f5f5f5'}}>
-                            <Modal.Title>Edit question</Modal.Title>
+                            <Modal.Title>Answer the question</Modal.Title>
                         </Modal.Header>
 
                         <Modal.Body className="px-4">
@@ -143,7 +184,7 @@ class EditAnswerModal extends React.Component {
                         </Modal.Body>  
                         
                         <div className='px-4 mb-3'>
-                            <Button type='submit' onClick={()=>this.props.closeAnswerModal()} className="w-25">
+                            <Button type='submit' className="w-25">
                                 Save
                             </Button>  
                         </div>
@@ -162,7 +203,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchConversation: (id) => dispatch(fetchConversation(id))
+        fetchConversation: id => dispatch(fetchConversation(id)),
+        saveConversation: conversation => dispatch(saveConversation(conversation))
     }
 };
 

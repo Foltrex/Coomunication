@@ -186,7 +186,7 @@ class AnswerTable extends React.Component {
                             <div className="d-flex justify-content-between align-items-center my-2">
                                 <div className='hint-text'>
                                     {firstPageRecordNumber} 
-                                    <span>&mdash;</span>  
+                                    <span>-</span>  
                                     {lastPageRecordNumber} of {totalElements}</div>
 
                                 <nav aria-label="...">
