@@ -19,12 +19,12 @@ function App() {
       <Router className="App">
         <Routes>
           <Route path='/login' element={<Login />} />
+          <Route path='register' element={<Register />} />
 
           <Route path='/' element={<PrivateRoute><NavigationBar /></PrivateRoute>} >
             <Route index element={<QuestionTable />} />
             <Route path='questions' element={<QuestionTable />} />
             <Route path='answers' element={<AnswerTable />} />
-            <Route path='register' element={<Register />} />
             <Route path='user'>
               <Route index element={<EditUser />} />
               <Route path='edit' element={<EditUser />} />

@@ -52,6 +52,11 @@ public class UserController {
         return jsonObject.toString();
     }
 
+    @PostMapping("/user/register")
+    public User register(@RequestBody User user) throws UserServiceException {
+        return userService.register(user);
+    }
+
     @GetMapping("/users")
     public List<User> findByUserIsNot(Principal loggedUser) throws UserServiceException {
         User currentLoggedUser = userService.findByEmail(loggedUser.getName());

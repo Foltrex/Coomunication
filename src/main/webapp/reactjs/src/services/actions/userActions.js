@@ -44,6 +44,27 @@ export const fetchUser = email => {
     };
 }
 
+export const registerUser = user => async(dispatch) =>{
+    dispatch({
+        type: UT.REGISTER_USER_REQUEST
+    });
+
+    try {
+        const response = await axios.post('http://localhost:8080/user/register', user);
+        dispatch({
+            type: UT.USER_SUCCESS,
+            payload: response.data
+        });
+        return Promise.resolve(response.data)
+    } catch (error) {
+        dispatch({
+            type: UT.USERS_FAILURE,
+            payload: error
+        });
+        return Promise.reject(error);
+    }
+}
+
 export const updateUser = user => {
     return dispatch => {
         dispatch({

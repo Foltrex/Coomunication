@@ -89,7 +89,6 @@ class EditUser extends React.Component {
     render() {
         const { name, surname, email, phoneNumber } = this.state;
         const { showAlerts, errorMessage } = this.state;
-        
         return (
             <>
                 <div className='mt-4'>
