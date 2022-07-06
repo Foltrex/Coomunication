@@ -8,10 +8,12 @@ import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -30,11 +32,11 @@ public class ConversationsController {
     }
 
     @GetMapping("/questions")
-    public List<Conversation> findQuestions(@RequestParam(defaultValue = "0") Integer pageNo,
+    public Page<Conversation> findQuestions(@RequestParam(defaultValue = "0") Integer pageNo,
                                             @RequestParam(defaultValue = "-1") Integer pageSize,
                                             Principal loggedUser) throws UserServiceException {
-        User user = userService.findByEmail(loggedUser.getName());
 
+        User user = userService.findByEmail(loggedUser.getName());
         return pageSize.equals(ALL_RECORDS_PER_PAGE)
                 ? conversationService.findQuestionsFromUser(user)
                 : conversationService.findPaginatedQuestionsFromUser(user, pageNo, pageSize);
@@ -46,11 +48,11 @@ public class ConversationsController {
     }
 
     @GetMapping("/answers")
-    public List<Conversation> findAnswers(@RequestParam(defaultValue = "0") Integer pageNo,
+    public Page<Conversation> findAnswers(@RequestParam(defaultValue = "0") Integer pageNo,
                                           @RequestParam(defaultValue = "-1") Integer pageSize,
                                           Principal loggedUser) throws UserServiceException {
-        User user = userService.findByEmail(loggedUser.getName());
 
+        User user = userService.findByEmail(loggedUser.getName());
         return pageSize.equals(ALL_RECORDS_PER_PAGE)
                 ? conversationService.findAnswersFromUser(user)
                 : conversationService.findPaginatedAnswersFromUser(user, pageNo, pageSize);
@@ -59,18 +61,6 @@ public class ConversationsController {
     @GetMapping("/answer/types")
     public List<String> findAllAnswerTypes() {
         return conversationService.findAllAnswerTypes();
-    }
-
-    @GetMapping("/questions/amount")
-    public long countQuestions(Principal loggedUser) throws UserServiceException {
-        User user = userService.findByEmail(loggedUser.getName());
-        return conversationService.countQuestionsFromUser(user);
-    }
-
-    @GetMapping("/answers/amount")
-    public long countAnswers(Principal loggedUser) throws UserServiceException {
-        User user = userService.findByEmail(loggedUser.getName());
-        return conversationService.countAnswersFromUser(user);
     }
 
     @PostMapping("/conversation/save")

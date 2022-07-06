@@ -13,6 +13,7 @@ import logo from '../assets/images/logo.png'
 
 const NavigationBar = () => {
     const auth = useSelector(state => state.auth);
+    console.log(auth.user && auth.user.name);
     const name = (auth.user && auth.user.name) || localStorage.getItem('name');
     const surname = (auth.user && auth.user.surname) || localStorage.getItem('surname');
 

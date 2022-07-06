@@ -37,40 +37,34 @@ public class ConversationService {
         return conversationDao.findById(id).orElseThrow(ConversationServiceException::new);
     }
 
-    public List<Conversation> findQuestionsFromUser(User user) {
-        return conversationDao.findBySender(user);
+    public Page<Conversation> findQuestionsFromUser(User user) {
+        int firstPage = 0;
+        int maxPageSize = Integer.MAX_VALUE;
+        Pageable paging = PageRequest.of(firstPage, maxPageSize);
+        return conversationDao.findBySender(user, paging);
     }
 
-    public List<Conversation> findPaginatedQuestionsFromUser(User user, int pageNo, int pageSize) {
+    public Page<Conversation> findPaginatedQuestionsFromUser(User user, int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Conversation> pageResult = conversationDao.findBySender(user, paging);
-
-        return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
+        return conversationDao.findBySender(user, paging);
     }
 
-    public List<Conversation> findAnswersFromUser(User user) {
-        return conversationDao.findByReceiver(user);
+    public Page<Conversation> findAnswersFromUser(User user) {
+        int firstPage = 0;
+        int maxPageSize = Integer.MAX_VALUE;
+        Pageable paging = PageRequest.of(firstPage, maxPageSize);
+        return conversationDao.findByReceiver(user, paging);
     }
 
-    public List<Conversation> findPaginatedAnswersFromUser(User user, int pageNo, int pageSize) {
+    public Page<Conversation> findPaginatedAnswersFromUser(User user, int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Conversation> pageResult = conversationDao.findByReceiver(user, paging);
-
-        return pageResult.hasContent() ? pageResult.getContent() : Collections.emptyList();
+        return conversationDao.findByReceiver(user, paging);
     }
 
     public List<String> findAllAnswerTypes() {
         return Stream.of(Answer.Type.values())
                 .map(Answer.Type::getType)
                 .toList();
-    }
-
-    public long countQuestionsFromUser(User user) {
-        return conversationDao.countBySender(user);
-    }
-
-    public long countAnswersFromUser(User user) {
-        return conversationDao.countByReceiver(user);
     }
 
     public void delete(Conversation conversation) {

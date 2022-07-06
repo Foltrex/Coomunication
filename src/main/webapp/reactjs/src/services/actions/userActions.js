@@ -57,6 +57,10 @@ export const updateUser = user => {
                     type: UT.USER_SUCCESS,
                     payload: response.data
                 });
+
+                localStorage.setItem('name', user.name);
+                localStorage.setItem('surname', user.surname);
+                localStorage.setItem('email', user.email);
             })
             .catch(error => {
                 dispatch({

@@ -1,7 +1,7 @@
 import * as CT from "../types/conversationTypes";
 
 const initialState = {
-    conversations: [],
+    pagination: '',
     conversation: '',
     error: ''
 };
@@ -26,12 +26,12 @@ const reducer = (state = initialState, action) => {
             };
         case CT.CONVERSATIONS_SUCCESS:
             return {
-                conversations: action.payload,
+                pagination: action.payload,
                 error: ''
             };
         case CT.CONVERSATIONS_FAILURE:
             return {
-                conversations: '',
+                pagination: '',
                 error: action.payload
             }
         default:

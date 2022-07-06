@@ -35,10 +35,10 @@ export const fetchConversation = id => {
 };
 
 export const fetchQuestions = (pageNo, pageSize) => {
-    pageNo ??= 0;
+    pageNo = pageNo ? pageNo : 0;
     
     const allRecordsPerPage = -1;
-    pageSize ??= allRecordsPerPage;
+    pageSize = pageSize ? pageSize : allRecordsPerPage;
 
     return dispatch => {
         dispatch({
@@ -52,15 +52,31 @@ export const fetchQuestions = (pageNo, pageSize) => {
                     payload: response.data
                 });
             })
-            .then(data => {
-                data.forEach(conversation => {
-                    let answerType = conversation.answer.type;
-                    answerType = answerType.toLowerCase();
-                    answerType = answerType.replace(/_/g, ' ');
-                    conversation.answer.type = answerType;
+            .catch(error => {
+                dispatch({
+                    type: CT.CONVERSATIONS_FAILURE,
+                    payload: error
+                });
+            });
+    };
+}
+
+export const fetchAnswers = (pageNo, pageSize) => {
+    pageNo = pageNo ? pageNo : 0;
     
-                    let answerText = conversation.answer.text;
-                    conversation.answer.text = (!answerText.includes('|')) ? answerText : '';
+    const allRecordsPerPage = -1;
+    pageSize = pageSize ? pageSize : allRecordsPerPage;
+
+    return dispatch => {
+        dispatch({
+            type: CT.FETCH_CONVERSATIONS_REQUEST,
+        });
+        axios
+            .get('http://localhost:8080/answers?pageNo=' + pageNo + "&pageSize=" + pageSize)
+            .then(response => {
+                dispatch({
+                    type: CT.CONVERSATIONS_SUCCESS,
+                    payload: response.data
                 });
             })
             .catch(error => {

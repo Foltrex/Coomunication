@@ -68,7 +68,9 @@ class EditUser extends React.Component {
             }
 
             this.props.updateUser(user);
-            window.location.href = '/questions';
+            setTimeout(() => {
+                window.location.href = '/questions';
+            }, 400)
         } else {
             this.setshowAlerts(true);
             this.setState({errorMessage: 'Invalid password'})
@@ -76,6 +78,7 @@ class EditUser extends React.Component {
     };
 
     isEnteredPasswordValid = enteredPassword => {
+        enteredPassword = enteredPassword ? enteredPassword : ''
         const { currentPassword } = this.state;
         return bcrypt.compareSync(enteredPassword, currentPassword);
     }

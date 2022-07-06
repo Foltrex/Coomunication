@@ -22,9 +22,6 @@ class EditAnswerModal extends React.Component {
         if (id) {
             this.findConversationById(id);
         }
-
-        // const _answerBox = this.buildAnswerBox();
-        // this.setState({answerBox: _answerBox});
     }
 
     findConversationById = id => {
@@ -33,41 +30,42 @@ class EditAnswerModal extends React.Component {
             let _conversation = this.props.conversationObject.conversation;
             if (_conversation) {
                 this.setState({conversation: _conversation});
+
+                this.setState({answerBox: this.buildAnswerBox(_conversation)});
             }
-        }, 5)
+        }, 200)
     }
 
-    buildAnswerBox = () => {
-        setTimeout(() => {
-            console.log(this.state)
-            const {answer} = this.state.conversation;
-            const type = answer.type;
-    
-            switch(type) {
-                case 'CHECKBOX':
-                    return this.buildCheckBoxes();
-                case 'SINGLE_LINE_TEXT':
-                    return this.buildSingleLineInput();
-                case 'MULTILINE_TEXT':
-                    return this.buildTextArea();
-                case 'RADIO_BUTTON':
-                    return this.buildRadioButtons();
-                case 'COMBOBOX':
-                    return this.buildCombobox();
-                case 'DATE':
-                    return this.buildDate();
-                default:
-                    return this.buildSingleLineInput();
-            }
-        }, 100);
+    buildAnswerBox = (conversation) => {
+        console.log(conversation)
+        const {answer} = conversation;
+        const type = answer && answer.type;
+        
+        switch(type) {
+            case 'CHECKBOX':
+                return (this.buildCheckBoxes(answer));                     
+            case 'SINGLE_LINE_TEXT':
+                return (this.buildSingleLineInput());
+            case 'MULTILINE_TEXT':
+                return (this.buildTextArea());
+            case 'RADIO_BUTTON':
+                return (this.buildRadioButtons(answer));
+            case 'COMBOBOX':
+                return (this.buildCombobox(answer));
+            case 'DATE':
+                return (this.buildDate());
+            default:
+                return (this.buildSingleLineInput());
+                
+        }
     }
 
     buildSingleLineInput = () => {
         return <Form.Control type='text' name='answerText' />
     }
 
-    buildCheckBoxes = () => {
-        const answerList = this.splitAnswer();
+    buildCheckBoxes = (answer) => {
+        const answerList = this.splitAnswer(answer);
         console.log(answerList)
         return <div/>
     }
@@ -76,14 +74,14 @@ class EditAnswerModal extends React.Component {
         return <Form.Control as="textarea" name='answerText' />
     }
 
-    buildRadioButtons = () => {
-        const answerList = this.splitAnswer();
+    buildRadioButtons = (answer) => {
+        const answerList = this.splitAnswer(answer);
         console.log(answerList)
         return <div/>
     }
 
-    buildCombobox = () => {
-        const answerList = this.splitAnswer();
+    buildCombobox = (answer) => {
+        const answerList = this.splitAnswer(answer);
         console.log(answerList)
         return <div/>
     }
@@ -92,10 +90,8 @@ class EditAnswerModal extends React.Component {
         return <DatePicker onChange={() => this.setState({date: new Date()})} value={this.state.date} />
     }
 
-    splitAnswer = () => {
-        const conversation = this.state.conversation;
-        const answer = conversation.answer;
-        const text = answer.text;
+    splitAnswer = (answer) => {
+        const text = answer && answer.text || '';
 
         const regex = /[\n*,|]/;
         return text.split(regex);
@@ -103,6 +99,7 @@ class EditAnswerModal extends React.Component {
 
     render() {
         const { sender, questionText } = this.state.conversation;
+        const {answerBox} = this.state;
 
         return (
             <> 
@@ -141,7 +138,7 @@ class EditAnswerModal extends React.Component {
                                 </Form.Group>
 
                                 <Form.Group className="mt-3">
-                                    {/* {this.state.answerBox} */}
+                                    {answerBox}
                                 </Form.Group>
                         </Modal.Body>  
                         
