@@ -6,13 +6,19 @@ class PageSizeSelect extends React.Component {
     }
 
     render() {
+        const {handleChangePageSize} = this.props;
+
         return (
             <>
                 <div>
-                    <select className='form-select'>
-                        <option>All</option>
-                        <option>5</option>
-                        <option>10</option>
+                    <select 
+                        className='form-select' 
+                        onChange={handleChangePageSize}
+                        name='currentPageSize'
+                    >
+                        <option value='-1'>All</option>
+                        <option value='5'>5</option>
+                        <option value='10'>10</option>
                     </select>
                 </div>
             </>

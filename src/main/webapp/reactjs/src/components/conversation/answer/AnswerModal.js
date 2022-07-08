@@ -3,7 +3,7 @@ import { Form, Modal, Button } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
 
 import {connect} from 'react-redux';
-import {saveConversation, fetchConversation} from '../../../services/actions/conversationsAction';
+import {fetchConversation} from '../../../services/actions/conversationsAction';
 
 class EditAnswerModal extends React.Component {
     constructor(props) {
@@ -48,7 +48,6 @@ class EditAnswerModal extends React.Component {
 
         const {stompClient} = this.props;
         stompClient.send('/app/conversation/save', {}, JSON.stringify(conversation));
-        // this.props.saveConversation(conversation);
         this.props.closeAnswerModal();
     }
 
@@ -157,28 +156,9 @@ class EditAnswerModal extends React.Component {
                         </Modal.Header>
 
                         <Modal.Body className="px-4">
-                                <Form.Group className="mt-3">
-                                    <Form.Label style={{fontSize:'initial'}}>
-                                        From user
-                                    </Form.Label>
+                                <SenderFormGroup sender={sender} />
 
-                                    <Form.Control 
-                                        type='text' 
-                                        value={sender && sender.email} 
-                                        readOnly 
-                                    />
-                                </Form.Group>
-
-                                <Form.Group className="mt-3">
-                                    <Form.Label style={{fontSize: 'initial'}}>
-                                        Question
-                                    </Form.Label>
-                                    <Form.Control 
-                                        type="text" 
-                                        value={questionText} 
-                                        readOnly 
-                                    />
-                                </Form.Group>
+                                <QuestionFormGroup questionText={questionText} />
 
                                 <Form.Group className="mt-3">
                                     {answerBox}
@@ -197,6 +177,53 @@ class EditAnswerModal extends React.Component {
     }
 }
 
+class SenderFormGroup extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {sender} = this.props;
+        return  <>
+                    <Form.Group className="mt-3">
+                        <Form.Label style={{fontSize:'initial'}}>
+                            From user
+                        </Form.Label>
+
+                        <Form.Control 
+                            type='text' 
+                            value={sender && sender.email} 
+                            readOnly 
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class QuestionFormGroup extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {questionText} = this.props;
+
+        return  <>
+                    <Form.Group className="mt-3">
+                        <Form.Label style={{fontSize: 'initial'}}>
+                            Question
+                        </Form.Label>
+                        <Form.Control 
+                            type="text" 
+                            value={questionText} 
+                            readOnly 
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+
 const mapStateToProps = state => {
     return {
         conversationObject: state.conversation
@@ -205,8 +232,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchConversation: id => dispatch(fetchConversation(id)),
-        saveConversation: conversation => dispatch(saveConversation(conversation))
+        fetchConversation: id => dispatch(fetchConversation(id))
     }
 };
 

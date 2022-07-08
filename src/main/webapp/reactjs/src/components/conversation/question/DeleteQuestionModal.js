@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-import {fetchConversation, deleteConversation} from '../../../services/actions/conversationsAction'
+import {fetchConversation} from '../../../services/actions/conversationsAction'
 
 class DeleteQuestionModal extends React.Component {
     constructor(props) {
@@ -42,7 +42,6 @@ class DeleteQuestionModal extends React.Component {
         console.log(conversation);
 
         stompClient.send('/app/conversation/delete', {}, JSON.stringify(conversation))
-        // this.props.deleteConversation(id);
         this.props.closeDeleteQuestionModal();
     }
 
@@ -88,8 +87,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchConversation: id => dispatch(fetchConversation(id)),
-        deleteConversation: id => dispatch(deleteConversation(id))
+        fetchConversation: id => dispatch(fetchConversation(id))
     }
 }
 

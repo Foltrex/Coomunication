@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Modal, Form} from 'react-bootstrap';
 
 import {connect} from 'react-redux';
-import {saveConversation, fetchConversation} from '../../../services/actions/conversationsAction';
+import {fetchConversation} from '../../../services/actions/conversationsAction';
 import {fetchUsers} from '../../../services/actions/userActions';
 import {fetchAnswerTypes} from '../../../services/actions/answerActions';
 import { clearInterval } from "stompjs";
@@ -108,14 +108,7 @@ class QuestionModal extends React.Component {
         }
 
         const { stompClient } = this.props;
-        console.log('Stomp client: ', stompClient);
-
-        console.log(conversation);
-
-
         stompClient.send('/app/conversation/save', {}, JSON.stringify(conversation));
-        
-        // this.props.saveConversation(conversation);
         this.props.closeQuestionModal();
     }
 
@@ -157,60 +150,18 @@ class QuestionModal extends React.Component {
                         </Modal.Header>
 
                         <Modal.Body className="px-4">
-                                <Form.Group className="mt-4 d-flex align-items-center">
-                                    <Form.Label className="w-25" style={{fontSize:'initial'}}>
-                                        For user <span style={{color:"red"}}>*</span>
-                                    </Form.Label>
-                                    <Form.Select name='receiver_email' className="w-75" defaultValue={receiver}>
-                                        {users.map(user => (
-                                            <option key={user.id} value={user.email} selected={receiver && user.id == receiver.id}>
-                                                {user.email}
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
 
-                                <Form.Group className="mt-3 d-flex aligh-items-center">
-                                    <Form.Label className="w-25" style={{fontSize: 'initial'}}>
-                                        Question <span style={{color:"red"}}>*</span>
-                                    </Form.Label>
-                                    <Form.Control 
-                                        className="w-75" 
-                                        type="text"
-                                        name='question_text'
-                                        defaultValue={questionText} 
-                                    />
-                                </Form.Group>
+                                <ReceiverFormGroup receiver={receiver} users={users} />
 
-                                <Form.Group className="mt-3 d-flex aligh-items-center">
-                                    <Form.Label className="w-25" style={{fontSize: 'initial'}}>
-                                        Answer type <span style={{color:"red"}}>*</span>
-                                    </Form.Label>
-                                    <Form.Select 
-                                        className="w-75" 
-                                        onChange={e => this.handleAnswerTypeChange(e)}
-                                        name='answer_type'
-                                    >
-                                        {answerTypes.map(answerType => (
-                                            <option key={answerType} value={answerType} selected={answer && answerType == answer.type}>
-                                                {answerType}
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
+                                <QuestionFormGroup questionText={questionText} />
 
-                                <Form.Group className="mt-3 d-flex aligh-items-center">
-                                    <Form.Label className="w-25" style={{fontSize: 'initial'}}>
-                                        Options
-                                    </Form.Label>
-                                    <Form.Control 
-                                        className="w-75" 
-                                        as="textarea" 
-                                        readOnly={!hasOption}
-                                        name='answer_text'
-                                        defaultValue={answer && answer.text}
-                                    />
-                                </Form.Group>
+                                <AnswerTypeFormGroup 
+                                    answer={answer} 
+                                    answerTypes={answerTypes} 
+                                    handleAnswerTypeChange={this.handleAnswerTypeChange} 
+                                />
+
+                                <AnswerOptionsFormGroup answer={answer} hasOption={hasOption}/>
                         </Modal.Body>  
 
                         <Modal.Footer style={{background: '#f5f5f5'}}>  
@@ -228,6 +179,112 @@ class QuestionModal extends React.Component {
     }
 }
 
+
+class ReceiverFormGroup extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const { users, receiver } = this.props;
+
+        return  <>
+                    <Form.Group className="mt-4 d-flex align-items-center">
+                        <Form.Label className="w-25" style={{fontSize:'initial'}}>
+                            For user <span style={{color:"red"}}>*</span>
+                        </Form.Label>
+                        <Form.Select name='receiver_email' className="w-75" defaultValue={receiver}>
+                            {users.map(user => (
+                                <option key={user.id} value={user.email} selected={receiver && user.id == receiver.id}>
+                                    {user.email}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                </>
+    }
+}
+
+class QuestionFormGroup extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {questionText} = this.props;
+
+        return  <>
+                    <Form.Group className="mt-3 d-flex aligh-items-center">
+                        <Form.Label className="w-25" style={{fontSize: 'initial'}}>
+                            Question <span style={{color:"red"}}>*</span>
+                        </Form.Label>
+                        <Form.Control 
+                            className="w-75" 
+                            type="text"
+                            name='question_text'
+                            defaultValue={questionText} 
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class AnswerTypeFormGroup extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {answer, answerTypes} = this.props;
+        const {handleAnswerTypeChange} = this.props
+        return  <>
+                    <Form.Group className="mt-3 d-flex aligh-items-center">
+                        <Form.Label className="w-25" style={{fontSize: 'initial'}}>
+                            Answer type <span style={{color:"red"}}>*</span>
+                        </Form.Label>
+                        <Form.Select 
+                            className="w-75" 
+                            onChange={e => handleAnswerTypeChange(e)}
+                            name='answer_type'
+                        >
+                            {answerTypes.map(answerType => (
+                                <option key={answerType} value={answerType} selected={answer && answerType == answer.type}>
+                                    {answerType}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+
+                </>
+    }
+}
+
+class AnswerOptionsFormGroup extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {answer, hasOption} = this.props;
+
+        return  <>
+                    <Form.Group className="mt-3 d-flex aligh-items-center">
+                        <Form.Label className="w-25" style={{fontSize: 'initial'}}>
+                            Options
+                        </Form.Label>
+                        <Form.Control 
+                            className="w-75" 
+                            as="textarea" 
+                            readOnly={!hasOption}
+                            name='answer_text'
+                            defaultValue={answer && answer.text}
+                        />
+                    </Form.Group>
+                </>;
+    }
+}
+
+
 const mapStateToProps = state => {
     return {
         conversationObject: state.conversation,
@@ -238,7 +295,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        saveConversation: conversation => dispatch(saveConversation(conversation)),
         fetchConversation: (id) => dispatch(fetchConversation(id)),
         fetchAnswerTypes: () => dispatch(fetchAnswerTypes()),
         fetchUsers: () => dispatch(fetchUsers())

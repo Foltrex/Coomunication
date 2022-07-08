@@ -4,6 +4,7 @@ import {Table, Button} from 'react-bootstrap';
 import PageSizeSelect from '../PageSizeSelect';
 import Pagination from '../Pagination';
 import { FaEdit } from "react-icons/fa";
+import Answer from './Answer';
 import {fetchAnswers} from '../../../services/actions/conversationsAction';
 import axios from 'axios';
 import {register} from '../../../websocket/websocket-listener';
@@ -86,35 +87,9 @@ class AnswerTable extends React.Component {
                     numberOfElements: numberOfElements
                 });
             }
-        }, 50);
+        }, 100);
     }
 
-    buildPagination = () => {
-        var { totalPages, currentPage } = this.state;
-        var pageLinks = [];
-        for (let i = 1; i <= totalPages; ++i) {
-            let changePageLink;
-            if (i === currentPage) {
-                changePageLink = 
-                    <li className="page-item active">
-                        <Button name='currentPage' type='button' className="page-link" value={i} onClick={this.changePage}>
-                            {i}
-                        </Button>
-                    </li>;
-            } else {
-                changePageLink = 
-                    <li className="page-item">
-                        <Button name='currentPage' type='button' className="page-link" value={i} onClick={this.changePage}>
-                            {i}
-                        </Button>
-                    </li>;
-            }
-
-            pageLinks.push(changePageLink);
-        }
-
-        return <nav aria-label="..."><ul class="pagination">{pageLinks}</ul></nav>;
-    }
 
     changePage = (event) => {
         let targetPage = parseInt(event.target.value);
@@ -156,7 +131,14 @@ class AnswerTable extends React.Component {
             currentPageSize = totalElements;
         }
 
-        var pageLinks = this.buildPagination();
+        conversations = conversations.map(conversation => {
+            return  <>
+                        <Answer
+                            conversation={conversation} 
+                            handleAnswerModalClick={this.handleAnswerModalClick.bind(this)}
+                        />
+                    </>
+        })
 
         return (
             <>
@@ -180,23 +162,8 @@ class AnswerTable extends React.Component {
                                 </tr>
                                 </thead>
                                 <tbody id="answerTable">
-                                    {conversations.map(conversation => (
-                                        <tr id={'conversation-' + conversation.id}>
-                                            <td>{conversation.sender.email}</td>
-                                            <td>{conversation.questionText}</td>
-                                            <td>{conversation.answer.text}</td>
-                                            <td className='icons-column'>
-                                                <button 
-                                                    className='btn btn-link text-secondary' 
-                                                    data-toggle="modal"
-                                                    style={{fontSize: '20px'}}
-                                                    onClick={() => this.handleAnswerModalClick(conversation.id)}
-                                                >
-                                                    <FaEdit />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {conversations}
+                                   
                                     {this.state.showAnswerModal && 
                                     <AnswerModal 
                                         id={this.state.currentConversationId} 
@@ -215,43 +182,17 @@ class AnswerTable extends React.Component {
                                     <span>-</span>  
                                     {lastPageRecordNumber} of {totalElements}</div>
 
-                                <nav aria-label="...">
-                                    <ul className="pagination">
-                                        <li className={currentPage === 1 && 'disabled' + "page-item"}>
-                                            <Button 
-                                                type='button' 
-                                                className="page-link"
-                                                onClick={this.prevPage} 
-                                            >
-                                                &laquo;
-                                            </Button>
-                                        </li>
-
-                                        {pageLinks}
-
-                                        <li className={currentPage === totalPages && 'disabled'  + "page-item"}>
-                                            <Button 
-                                                type='button'
-                                                className="page-link" 
-                                                onClick={this.nextPage}
-                                            >
-                                                &raquo;
-                                            </Button>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                <Pagination
+                                    prevPage={this.prevPage}
+                                    nextPage={this.nextPage}
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    changePage={this.changePage.bind(this)}
+                                />
                                 
-                                <div>
-                                    <select 
-                                        className='form-select' 
-                                        onChange={this.handleChangePageSize}
-                                        name='currentPageSize'
-                                    >
-                                        <option value='-1'>All</option>
-                                        <option value='5'>5</option>
-                                        <option value='10'>10</option>
-                                    </select>
-                                </div>
+                                <PageSizeSelect 
+                                    handleChangePageSize={this.handleChangePageSize.bind(this)}
+                                />
                             </div>
                         </div>
                     </div>

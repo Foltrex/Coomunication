@@ -112,75 +112,33 @@ class EditUser extends React.Component {
                         </Alert>
                         )}
 
-                        <Form.Group className='mt-3 px-4'>
-                            <Form.Label style={{fontSize:'initial'}}>
-                                First Name
-                            </Form.Label>
-                            <Form.Control 
-                                type='text'
-                                name='name'
-                                value={name}
-                                onChange={this.userChange}
-                            />
-                        </Form.Group>
+                        <NameInput 
+                            name={name} 
+                            userChange={this.userChange.bind(this)} 
+                        />
 
-                        <Form.Group className='mt-3 px-4'>
-                            <Form.Label style={{fontSize:'initial'}}>
-                                Last Name
-                            </Form.Label>
-                            <Form.Control 
-                                type='text'
-                                name='surname'
-                                value={surname}
-                                onChange={this.userChange}
-                            />
-                        </Form.Group>
+                        <SurnameInput 
+                            surname={surname} 
+                            userChange={this.userChange.bind(this)} 
+                        />
 
-                        <Form.Group className='mt-3 px-4'>
-                            <Form.Label style={{fontSize:'initial'}}>
-                                Email <span style={{color: 'red', fontSize: '20px'}}>*</span>
-                            </Form.Label>
-                            <Form.Control 
-                                type='text'
-                                name='email'
-                                value={email}
-                                onChange={this.userChange}
-                            />
-                        </Form.Group>
+                        <EmailInput 
+                            email={email} 
+                            userChange={this.userChange.bind(this)} 
+                        />
 
-                        <Form.Group className='mt-3 px-4'>
-                            <Form.Label style={{fontSize:'initial'}}>
-                                Phone Number
-                            </Form.Label>
-                            <Form.Control 
-                                type='text'
-                                name='phoneNumber'
-                                value={phoneNumber}
-                                onChange={this.userChange}
-                            />
-                        </Form.Group>
+                        <PhoneNumberInput 
+                            phoneNumber={phoneNumber} 
+                            userChange={this.userChange.bind(this)} 
+                        />
 
-                        <Form.Group className='mt-3 px-4'>
-                            <Form.Label style={{fontSize:'initial'}}>
-                                Current Password <span style={{color:'red', fontSize:'20px'}}>*</span>
-                            </Form.Label>
-                            <Form.Control 
-                                type='password'
-                                name='enteredPassword'
-                                onChange={this.userChange}
-                            />
-                        </Form.Group>
+                        <CurrentPasswordInput 
+                            userChange={this.userChange.bind(this)} 
+                        />
 
-                        <Form.Group className='mt-3 px-4'>
-                            <Form.Label style={{fontSize:'initial'}}>
-                                New Password
-                            </Form.Label>
-                            <Form.Control 
-                                type='password'
-                                name='password'
-                                onChange={this.userChange}
-                                />
-                        </Form.Group>
+                        <NewPasswordInput 
+                            userChange={this.userChange.bind(this)} 
+                        />
 
                         <div className='px-4 my-3'>
                             <Button variant="primary" type="submit" size='lg'>
@@ -191,6 +149,152 @@ class EditUser extends React.Component {
                 </div>
             </>
         );
+    }
+}
+
+class NameInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {name} = this.props;
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mt-3 px-4'>
+                        <Form.Label style={{fontSize:'initial'}}>
+                            First Name
+                        </Form.Label>
+                        <Form.Control 
+                            type='text'
+                            name='name'
+                            value={name}
+                            onChange={userChange}
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class SurnameInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {surname} = this.props;
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mt-3 px-4'>
+                        <Form.Label style={{fontSize:'initial'}}>
+                            Last Name
+                        </Form.Label>
+                        <Form.Control 
+                            type='text'
+                            name='surname'
+                            value={surname}
+                            onChange={userChange}
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class EmailInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {email} = this.props;
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mt-3 px-4'>
+                        <Form.Label style={{fontSize:'initial'}}>
+                            Email <span style={{color: 'red', fontSize: '20px'}}>*</span>
+                        </Form.Label>
+                        <Form.Control 
+                            type='text'
+                            name='email'
+                            value={email}
+                            onChange={userChange}
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class PhoneNumberInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {phoneNumber} = this.props;
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mt-3 px-4'>
+                        <Form.Label style={{fontSize:'initial'}}>
+                            Phone Number
+                        </Form.Label>
+                        <Form.Control 
+                            type='text'
+                            name='phoneNumber'
+                            value={phoneNumber}
+                            onChange={userChange}
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class CurrentPasswordInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mt-3 px-4'>
+                        <Form.Label style={{fontSize:'initial'}}>
+                            Current Password <span style={{color:'red', fontSize:'20px'}}>*</span>
+                        </Form.Label>
+                        <Form.Control 
+                            type='password'
+                            name='enteredPassword'
+                            onChange={userChange}
+                        />
+                    </Form.Group>
+                </>
+    }    
+}
+
+class NewPasswordInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mt-3 px-4'>
+                        <Form.Label style={{fontSize:'initial'}}>
+                            New Password
+                        </Form.Label>
+                        <Form.Control 
+                            type='password'
+                            name='password'
+                            onChange={userChange}
+                        />
+                    </Form.Group>
+                </>
     }
 }
 

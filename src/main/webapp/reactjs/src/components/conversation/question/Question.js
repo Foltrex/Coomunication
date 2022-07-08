@@ -14,7 +14,7 @@ class Question extends React.Component {
     }
     
     render() {
-        const {conversation, stompClient} = this.props;
+        const {conversation} = this.props;
         const {handleDeleteQuestionModalClick, handleEditQuestionModalClick} = this.props;
 
         return <>

@@ -85,29 +85,17 @@ class Register extends React.Component {
                     </Alert>
                     )}
 
-                    <Form.Group className='mb-2' controlId="formBasicEmail">
-                        <Form.Control name='email' onChange={this.userChange} type="email" placeholder="Email" />
-                    </Form.Group>
+                    <EmailInput userChange={this.userChange.bind(this)} />
 
-                    <Form.Group className="mb-2" controlId="formBasicPassword">
-                        <Form.Control name='password' onChange={this.userChange} type="password" placeholder="Password" />
-                    </Form.Group>
+                    <PasswordInput userChange={this.userChange.bind(this)} />
                     
-                    <Form.Group className="mb-2" controlId="formBasicPassword">
-                        <Form.Control name='repeatedPassword' onChange={this.userChange} type="password" placeholder="Confirm Password" />
-                    </Form.Group>
+                    <RepeatPasswordInput userChange={this.userChange.bind(this)} />
 
-                    <Form.Group className='mb-2' controlId="formBasicFirstName">
-                        <Form.Control name='name' onChange={this.userChange} type="text" placeholder="First Name" />
-                    </Form.Group>
+                    <NameInput userChange={this.userChange.bind(this)} />
 
-                    <Form.Group className='mb-2' controlId="formBasicLastName">
-                        <Form.Control name='surname' onChange={this.userChange} type="text" placeholder="Last Name" />
-                    </Form.Group>
+                    <SurnameInput userChange={this.userChange.bind(this)} />
 
-                    <Form.Group className='mb-4' controlId="formBasicPhoneNumber">
-                        <Form.Control name='phoneNumber' onChange={this.userChange} type="text" placeholder="Phone Number" />
-                    </Form.Group>
+                    <PhoneNumberInput userChange={this.userChange.bind(this)}/>
 
                     <Button variant='primary' type='submit' className='btn btn-lg btn-block w-100 mb-3'>
                         SIGN UP
@@ -122,6 +110,131 @@ class Register extends React.Component {
                 </Form>
             </div>
         );
+    }
+}
+
+class EmailInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mb-2' controlId="formBasicEmail">
+                        <Form.Control 
+                            name='email' 
+                            onChange={userChange}
+                            type="email" 
+                            placeholder="Email" />
+                    </Form.Group>
+                </>
+    }
+}
+
+class PasswordInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className="mb-2" controlId="formBasicPassword">
+                        <Form.Control 
+                            name='password' 
+                            onChange={userChange} 
+                            type="password" 
+                            placeholder="Password" 
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class RepeatPasswordInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className="mb-2" controlId="formBasicPassword">
+                        <Form.Control 
+                            name='repeatedPassword' 
+                            onChange={userChange} 
+                            type="password" 
+                            placeholder="Confirm Password" 
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class NameInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mb-2' controlId="formBasicFirstName">
+                        <Form.Control 
+                            name='name' 
+                            onChange={userChange} 
+                            type="text" 
+                            placeholder="First Name" 
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class SurnameInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    
+    render() {
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mb-2' controlId="formBasicLastName">
+                        <Form.Control 
+                            name='surname' 
+                            onChange={userChange} 
+                            type="text"
+                            placeholder="Last Name" 
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class PhoneNumberInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {userChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mb-4' controlId="formBasicPhoneNumber">
+                        <Form.Control 
+                            name='phoneNumber' 
+                            onChange={userChange} 
+                            type="text"
+                            placeholder="Phone Number" 
+                        />
+                    </Form.Group>
+                </>
     }
 }
 

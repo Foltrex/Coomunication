@@ -4,7 +4,6 @@ import {Link, useNavigate } from 'react-router-dom';
 import { authenticateUser } from '../../services/actions/authActions';
 import ForgotPasswordModal from './ForgotPasswordModal';
 import { useDispatch } from "react-redux";
-import axios from 'axios';
 
 import logo from '../../assets/images/logo.png';
 
@@ -46,41 +45,19 @@ const Login = (props) => {
       setUser(initialState);
     };
 
-    const formStyle = {
-        maxWidth: '480px',
-        margin:'auto',
-    }
-
     return (
         <>
             <div className='text-center mt-5'>
-                <Form className='bg-white border rounded-lg px-5 py-3' style={formStyle}>
+                <Form className='bg-white border rounded-lg px-5 py-3' style={{maxWidth: '480px', margin: 'auto'}}>
                     <Image src={logo} alt='logo' className='img-fluid my-4' />
 
                     <h3 className="mb-3">
                         Log In
                     </h3>
 
-                    <Form.Group className='mb-3' controlId="formBasicEmail">
-                        <Form.Control 
-                            equired type="email" 
-                            placeholder="Email"  
-                            name="email"
-                            value={user.email}
-                            onChange={credentialChange}
-                        />
-                    </Form.Group>
+                    <NameInput user={user} credentialChange={credentialChange} />
 
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Control 
-                            required 
-                            type="password" 
-                            placeholder="Password" 
-                            name="password"
-                            value={user.password}
-                            onChange={credentialChange} 
-                        />
-                    </Form.Group>
+                    <PasswordInput user={user} credentialChange={credentialChange} />
 
                     {showAlerts && props.message && (
                         <Alert variant="success" onClose={() => setshowAlerts(false)} dismissible>
@@ -94,7 +71,7 @@ const Login = (props) => {
                     )}
 
                     <div className='d-flex flex-row my-3 justify-content-between'>  
-                        <Form.Check type="checkbox" label="Remember me" />
+                        <Form.Check name="remember-me" type="checkbox" label="Remember me" />
         
                         <a 
                             href='#forgotPasswordModal'
@@ -125,5 +102,53 @@ const Login = (props) => {
         </>
     );
 };
+
+
+class NameInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {user} = this.props;
+        const {credentialChange} = this.props;
+
+        return  <>
+                    <Form.Group className='mb-3' controlId="formBasicEmail">
+                        <Form.Control 
+                            equired type="email" 
+                            placeholder="Email"  
+                            name="email"
+                            value={user.email}
+                            onChange={credentialChange}
+                        />
+                    </Form.Group>
+                </>
+    }
+}
+
+class PasswordInput extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const {user} = this.props;
+        const {credentialChange} = this.props;
+
+        return  <>
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Control 
+                            required 
+                            type="password" 
+                            placeholder="Password" 
+                            name="password"
+                            value={user.password}
+                            onChange={credentialChange} 
+                        />
+                    </Form.Group>
+                </>
+    }
+}
 
 export default Login;

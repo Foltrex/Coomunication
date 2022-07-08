@@ -1,4 +1,5 @@
 import React from 'react';
+import {Button} from 'react-bootstrap';
 
 
 class Pagination extends React.Component {
@@ -6,19 +7,63 @@ class Pagination extends React.Component {
         super(props);
     }
 
+    buildPagination = () => {
+        var { totalPages, currentPage } = this.props;
+        var pageLinks = [];
+        for (let i = 1; i <= totalPages; ++i) {
+            let changePageLink;
+            if (i === currentPage) {
+                changePageLink = 
+                    <li className="page-item active">
+                        <Button name='currentPage' type='button' className="page-link" value={i} onClick={this.props.changePage}>
+                            {i}
+                        </Button>
+                    </li>;
+            } else {
+                changePageLink = 
+                    <li className="page-item">
+                        <Button name='currentPage' type='button' className="page-link" value={i} onClick={this.props.changePage}>
+                            {i}
+                        </Button>
+                    </li>;
+            }
+
+            pageLinks.push(changePageLink);
+        }
+
+        return <nav aria-label="..."><ul class="pagination">{pageLinks}</ul></nav>;
+    }
+
     render() {
+        const {prevPage, nextPage} = this.props;
+        const {currentPage, totalPages} = this.props;
+        
+        const pageLinks = this.buildPagination();
+
         return (
             <>
                 <nav aria-label="...">
-                    <ul class="pagination">
-                        <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">&laquo;</a>
+                    <ul className="pagination">
+                        <li className={currentPage === 1 && 'disabled' + "page-item"}>
+                            <Button 
+                                type='button' 
+                                className="page-link"
+                                onClick={prevPage} 
+                            >
+                                &laquo;
+                            </Button>
                         </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                        <a class="page-link" href="#">&raquo;</a>
+
+                        {pageLinks}
+
+                        <li className={currentPage === totalPages && 'disabled'  + "page-item"}>
+                            <Button 
+                                type='button'
+                                className="page-link" 
+                                onClick={nextPage}
+                            >
+                                &raquo;
+                            </Button>
                         </li>
                     </ul>
                 </nav>
