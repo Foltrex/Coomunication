@@ -1,5 +1,6 @@
 package com.softarex.communication.security;
 
+import com.google.common.collect.ImmutableList;
 import com.softarex.communication.security.jwt.JwtTokenFilter;
 import com.softarex.communication.security.jwt.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -56,10 +57,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+        config.setAllowedOrigins(ImmutableList.of("http://localhost:3000"));
+        config.setAllowedMethods(ImmutableList.of("HEAD", "GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
         config.setAllowCredentials(true);
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        config.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type"));
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -76,7 +77,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                 .authorizeRequests()
-                     .antMatchers("/user/*").permitAll()
+                     .antMatchers("/user/*", "/ws/info", "/ws/**").permitAll()
                      .anyRequest().authenticated()
                 .and()
                     .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

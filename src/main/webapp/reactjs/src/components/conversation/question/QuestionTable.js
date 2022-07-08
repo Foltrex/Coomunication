@@ -3,16 +3,15 @@ import {connect, useStore } from 'react-redux';
 import {Button, Table} from 'react-bootstrap';
 import QuestionModal from './QuestionModal';
 import DeleteQuestionModal from './DeleteQuestionModal';
-import PageSizeSelect from '../PageSizeSelect';
-import Pagination from '../Pagination';
 import { FaEdit } from "react-icons/fa";
 import { GoPlus } from 'react-icons/go';
 import { BsTrashFill } from "react-icons/bs";
 import {fetchQuestions} from '../../../services/actions/conversationsAction';
-import axios from 'axios';
-
+import Question from './Question';
+import {register} from '../../../websocket/websocket-listener';
 import '../../../assets/css/Table.css';
 
+var stompClient = null;
 class QuestionTable extends React.Component {
     constructor() {
         super();
@@ -28,6 +27,29 @@ class QuestionTable extends React.Component {
             showDeleteQuestionModal:false,
         }
     }
+
+
+    componentDidMount() {
+        this.findQuestions(this.state.currentPage);
+
+        this.connect();
+    }
+
+
+    connect = () => {
+        const loggedUserEmail = localStorage.getItem('email');
+
+        stompClient = register([
+            {route: '/topic/question/save/' + loggedUserEmail, callback: this.refreshAndGoToFirstPageWithAllRecords },
+            {route: '/topic/question/delete/' + loggedUserEmail, callback: this.refreshAndGoToFirstPageWithAllRecords }
+        ])
+    }
+
+    refreshAndGoToFirstPageWithAllRecords = () => {
+        var firstPage = 1;
+        var pageSize = -1;
+        this.findQuestions(firstPage, pageSize);
+    } 
 
     handleAddQuestionModalClick() {
         this.setState({showAddQuestionModal:!this.state.showAddQuestionModal});
@@ -47,10 +69,6 @@ class QuestionTable extends React.Component {
         });
     }
 
-    componentDidMount() {
-        this.findQuestions(this.state.currentPage);
-    }
-
     findQuestions(targetPageNo, currentPageSize = this.state.currentPageSize) {
         if (currentPageSize === this.state.currentPageSize) {
             targetPageNo -= 1;
@@ -60,7 +78,7 @@ class QuestionTable extends React.Component {
 
         this.props.fetchQuestions(targetPageNo, currentPageSize);
 
-        setTimeout(() => {
+        let timerId = setInterval(() => {
             let pagination = this.props.conversationObject.pagination;
             var {content, totalPages, totalElements, number, numberOfElements } = pagination;
 
@@ -82,6 +100,8 @@ class QuestionTable extends React.Component {
                     currentPage: number + 1,
                     numberOfElements: numberOfElements
                 });
+
+                clearInterval(timerId);
             }
         }, 50);
     }
@@ -177,7 +197,14 @@ class QuestionTable extends React.Component {
                                     <GoPlus style={{fontSize: '20px'}} />
                                     Add question
                                 </button>
-                               {this.state.showAddQuestionModal && <QuestionModal isVisible={this.state.showAddQuestionModal}  closeQuestionModal={() => this.handleAddQuestionModalClick()}/>}
+                               {
+                               this.state.showAddQuestionModal && 
+                               <QuestionModal 
+                                    isVisible={this.state.showAddQuestionModal}  
+                                    closeQuestionModal={() => this.handleAddQuestionModalClick()}
+                                    stompClient={stompClient}
+                                />
+                               }
                             </div>
                             </div>
                         </div>
@@ -194,6 +221,13 @@ class QuestionTable extends React.Component {
                             </thead>
                             <tbody id="questionTable">
                                 {conversations.map(conversation => (
+                                    <>
+                                    <Question 
+                                        conversation={conversation} 
+                                        handleEditQuestionModalClick={this.handleEditQuestionModalClick} 
+                                        handleDeleteQuestionModalClick={this.handleDeleteQuestionModalClick}
+                                        stompClient={stompClient}
+                                    />
                                     <tr id={'conversation-' + conversation.id}>
                                         <td>{conversation.receiver.email}</td>
                                         <td>{conversation.questionText}</td>
@@ -219,9 +253,25 @@ class QuestionTable extends React.Component {
                                             </button>
                                         </td>
                                     </tr>
+                                    </>
+
                                 ))}
-                                {this.state.showEditQuestionModal && <QuestionModal id={this.state.currentConversationId} isVisible={this.state.showEditQuestionModal} closeQuestionModal={() => this.handleEditQuestionModalClick()} />}
-                                {this.state.showDeleteQuestionModal && <DeleteQuestionModal id={this.state.currentConversationId} isVisible={this.state.showDeleteQuestionModal} closeDeleteQuestionModal={() => this.handleDeleteQuestionModalClick()} />}
+                                {this.state.showEditQuestionModal && 
+                                <QuestionModal 
+                                    id={this.state.currentConversationId} 
+                                    isVisible={this.state.showEditQuestionModal} 
+                                    closeQuestionModal={() => this.handleEditQuestionModalClick()} 
+                                    stompClient={stompClient}
+                                />
+                                }
+                                {this.state.showDeleteQuestionModal && 
+                                <DeleteQuestionModal 
+                                    id={this.state.currentConversationId} 
+                                    isVisible={this.state.showDeleteQuestionModal} 
+                                    closeDeleteQuestionModal={() => this.handleDeleteQuestionModalClick()} 
+                                    stompClient={stompClient}
+                                />
+                                }
                             </tbody>
                         </Table>
                         

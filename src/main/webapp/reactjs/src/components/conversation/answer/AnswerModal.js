@@ -46,7 +46,9 @@ class EditAnswerModal extends React.Component {
         answer.text = e.target.answerText.value || answers.join(', ') || '';
         conversation.answer = answer;
 
-        this.props.saveConversation(conversation);
+        const {stompClient} = this.props;
+        stompClient.send('/app/conversation/save', {}, JSON.stringify(conversation));
+        // this.props.saveConversation(conversation);
         this.props.closeAnswerModal();
     }
 

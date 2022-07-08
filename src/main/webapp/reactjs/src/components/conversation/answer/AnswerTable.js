@@ -6,10 +6,12 @@ import Pagination from '../Pagination';
 import { FaEdit } from "react-icons/fa";
 import {fetchAnswers} from '../../../services/actions/conversationsAction';
 import axios from 'axios';
+import {register} from '../../../websocket/websocket-listener';
 
 import '../../../assets/css/Table.css';
 import AnswerModal from './AnswerModal';
 
+var stompClient = null;
 class AnswerTable extends React.Component {
     constructor() {
         super();
@@ -33,7 +35,24 @@ class AnswerTable extends React.Component {
 
     componentDidMount() {
         this.findAnswers(this.state.currentPage);
+
+        this.connect();
     }
+    
+    connect = () => {
+        const loggedUserEmail = localStorage.getItem('email');
+
+        stompClient = register([
+            {route: '/topic/answer/save/' + loggedUserEmail, callback: this.refreshAndGoToFirstPageWithAllRecords },
+            {route: '/topic/answer/delete/' + loggedUserEmail, callback: this.refreshAndGoToFirstPageWithAllRecords }
+        ])
+    }
+
+    refreshAndGoToFirstPageWithAllRecords = () => {
+        var firstPage = 1;
+        var pageSize = -1;
+        this.findAnswers(firstPage, pageSize);
+    } 
 
     findAnswers(targetPageNo, currentPageSize = this.state.currentPageSize) {
         if (currentPageSize === this.state.currentPageSize) {
@@ -178,7 +197,14 @@ class AnswerTable extends React.Component {
                                             </td>
                                         </tr>
                                     ))}
-                                    {this.state.showAnswerModal && <AnswerModal id={this.state.currentConversationId} isVisible={this.state.showAnswerModal} closeAnswerModal={() => this.handleAnswerModalClick()} />}
+                                    {this.state.showAnswerModal && 
+                                    <AnswerModal 
+                                        id={this.state.currentConversationId} 
+                                        isVisible={this.state.showAnswerModal} 
+                                        closeAnswerModal={() => this.handleAnswerModalClick()} 
+                                        stompClient={stompClient}
+                                    />
+                                    }
                                 </tbody>
                             </Table>
 

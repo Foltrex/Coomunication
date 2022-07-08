@@ -7,14 +7,42 @@ import {fetchConversation, deleteConversation} from '../../../services/actions/c
 class DeleteQuestionModal extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            conversation: ''
+        }
+    }
+
+    componentDidMount() {
+        const id = +this.props.id;
+        if (id) {
+            this.findConversationById(id);
+        }
+    }
+
+    findConversationById = id => {
+        this.props.fetchConversation(id);
+        setTimeout(() => {
+            let _conversation = this.props.conversationObject.conversation;
+    
+            if (_conversation) {
+                this.setState({
+                    conversation: _conversation
+                })
+            }
+        }, 100)
     }
 
     deleteConversation = e => {
         e.preventDefault();
-
-        const id = +this.props.id;
         
-        this.props.deleteConversation(id);
+        const { stompClient } = this.props;
+
+        const {conversation} = this.state;
+
+        console.log(conversation);
+
+        stompClient.send('/app/conversation/delete', {}, JSON.stringify(conversation))
+        // this.props.deleteConversation(id);
         this.props.closeDeleteQuestionModal();
     }
 
@@ -52,6 +80,12 @@ class DeleteQuestionModal extends React.Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        conversationObject: state.conversation
+    };
+};
+
 const mapDispatchToProps = dispatch => {
     return {
         fetchConversation: id => dispatch(fetchConversation(id)),
@@ -59,4 +93,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(null, mapDispatchToProps) (DeleteQuestionModal);
+export default connect(mapStateToProps, mapDispatchToProps) (DeleteQuestionModal);

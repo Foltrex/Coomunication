@@ -19,7 +19,7 @@ function App() {
       <Router className="App">
         <Routes>
           <Route path='/login' element={<Login />} />
-          <Route path='register' element={<Register />} />
+          <Route path='/register' element={<Register />} />
 
           <Route path='/' element={<PrivateRoute><NavigationBar /></PrivateRoute>} >
             <Route index element={<QuestionTable />} />

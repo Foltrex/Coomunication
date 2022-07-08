@@ -67,8 +67,8 @@ public class ConversationService {
                 .toList();
     }
 
-    public void delete(Long id) {
-        conversationDao.deleteById(id);
+    public void delete(Conversation conversation) {
+        conversationDao.delete(conversation);
     }
 
     public Conversation save(Conversation conversation) {

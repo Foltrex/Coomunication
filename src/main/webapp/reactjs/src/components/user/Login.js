@@ -100,7 +100,7 @@ const Login = (props) => {
                             href='#forgotPasswordModal'
                             data-toggle="modal"
                             style={{textDecoration: 'none'}}
-                            onClick={() => this.setShowForgotPasswordModal()}
+                            onClick={() => setShowForgotPasswordModal(true)}
                         >
                             Forgot your Password?
                         </a>

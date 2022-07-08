@@ -16,9 +16,7 @@ class ForgotPasswordModal extends React.Component {
                     </Modal.Header>
 
                     <Modal.Body className="px-4">
-                        <h6>It was necessary to remember</h6>
-                        <br />
-                        <h6 className='text-secondary'>It's not my concern to remind it</h6>
+                        <h6>It was necessary to remember</h6><br/>
                     </Modal.Body>
 
                     <Modal.Footer style={{background: '#f5f5f5'}}>  

@@ -18,9 +18,14 @@
     "react-redux": "^7.2.8",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^2.1.3",
+    "react-stomp": "^5.1.0",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
-    "web-vitals": "^2.1.4"
+    "sockjs": "^0.3.24",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
+    "web-vitals": "^2.1.4",
+    "websocket": "^1.0.34"
   },
   "scripts": {
     "start": "react-scripts start",

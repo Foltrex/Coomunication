@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {saveConversation, fetchConversation} from '../../../services/actions/conversationsAction';
 import {fetchUsers} from '../../../services/actions/userActions';
 import {fetchAnswerTypes} from '../../../services/actions/answerActions';
+import { clearInterval } from "stompjs";
 
 class QuestionModal extends React.Component {
     constructor(props) {
@@ -71,13 +72,15 @@ class QuestionModal extends React.Component {
     }
 
     findUsers = () => {
+        var _users;
         this.props.fetchUsers();
-        setTimeout(() => {
-            var _users = this.props.userObject.users;
+        let timerId = setInterval(() => {
+            _users = this.props.userObject.users;
             if (_users) {
                 this.setState({
                     users: _users
                 })
+                clearInterval(timerId);
             }
         }, 100);
     }
@@ -89,12 +92,13 @@ class QuestionModal extends React.Component {
         convertedAnswerType = convertedAnswerType.replace(/ /g, '_');
         convertedAnswerType = convertedAnswerType.toUpperCase();
 
+        const _receiver = {email: e.target.receiver_email.value};
+        const _sender = {email: localStorage.getItem('email')};
+
         const conversation = {
             id: this.state.id,
-            sender: this.props.authObject.user,
-            receiver: {
-                id: +e.target.receiver_id.value
-            },
+            sender: _sender,
+            receiver: _receiver,
             questionText: e.target.question_text.value,
             answer: {
                 id: this.state.answer && this.state.answer.id,
@@ -102,8 +106,16 @@ class QuestionModal extends React.Component {
                 text: e.target.answer_text.value
             }
         }
+
+        const { stompClient } = this.props;
+        console.log('Stomp client: ', stompClient);
+
+        console.log(conversation);
+
+
+        stompClient.send('/app/conversation/save', {}, JSON.stringify(conversation));
         
-        this.props.saveConversation(conversation);
+        // this.props.saveConversation(conversation);
         this.props.closeQuestionModal();
     }
 
@@ -149,9 +161,9 @@ class QuestionModal extends React.Component {
                                     <Form.Label className="w-25" style={{fontSize:'initial'}}>
                                         For user <span style={{color:"red"}}>*</span>
                                     </Form.Label>
-                                    <Form.Select name='receiver_id' className="w-75" defaultValue={receiver}>
+                                    <Form.Select name='receiver_email' className="w-75" defaultValue={receiver}>
                                         {users.map(user => (
-                                            <option key={user.id} value={user.id} selected={receiver && user.id == receiver.id}>
+                                            <option key={user.id} value={user.email} selected={receiver && user.id == receiver.id}>
                                                 {user.email}
                                             </option>
                                         ))}
@@ -220,8 +232,7 @@ const mapStateToProps = state => {
     return {
         conversationObject: state.conversation,
         answerObject: state.answer,
-        userObject: state.user,
-        authObject: state.auth
+        userObject: state.user
     };
 };
 
