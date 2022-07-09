@@ -16,20 +16,22 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 @Slf4j
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
     public static final String AUTHORIZATION = "Authorization";
 
-    @Autowired
-    private JwtTokenProvider jwtProvider;
+    private final JwtTokenProvider jwtProvider;
+    private final MessengerUserDetailsService messengerUserDetailsService;
 
     @Autowired
-    private MessengerUserDetailsService messengerUserDetailsService;
+    public JwtTokenFilter(JwtTokenProvider jwtProvider, MessengerUserDetailsService messengerUserDetailsService) {
+        this.jwtProvider = jwtProvider;
+        this.messengerUserDetailsService = messengerUserDetailsService;
+    }
 
+    /** Checks and validate token in request header and and map token to user if token's correct */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -43,6 +45,7 @@ public class JwtTokenFilter extends GenericFilterBean {
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
 
+            // set authorization token for all requests
             response.setHeader(AUTHORIZATION, token);
         }
         filterChain.doFilter(servletRequest, servletResponse);

@@ -22,6 +22,11 @@ public class JwtTokenProvider implements Serializable {
     @Value("$(jwt.secret)")
     private String jwtSecret;
 
+    /**
+     * Generates jsw token with login
+     *
+     * @return the generated login
+     */
     public String generateToken(String login) {
         Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
@@ -33,7 +38,9 @@ public class JwtTokenProvider implements Serializable {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            JwtParser parser = Jwts.parser();
+            parser = parser.setSigningKey(jwtSecret);
+            Jws<Claims> jws =  parser.parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             log.warn("invalid token");
@@ -41,8 +48,12 @@ public class JwtTokenProvider implements Serializable {
         return false;
     }
 
+
     public String getLoginFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        JwtParser parser = Jwts.parser();
+        parser = parser.setSigningKey(jwtSecret);
+        Jws<Claims> jws = parser.parseClaimsJws(token);
+        Claims claims = jws.getBody();
         return claims.getSubject();
     }
 }

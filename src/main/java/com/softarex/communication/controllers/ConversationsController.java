@@ -110,7 +110,7 @@ public class ConversationsController {
 
     /** Saves conversation */
     @MessageMapping("/conversation/save")
-    public void saveQuestion(@Payload Conversation conversation) throws UserServiceException {
+    public void saveQuestion(@Payload Conversation conversation) {
         User receiver = conversation.getReceiver();
         String receiverEmail = receiver.getEmail();
         receiver = userService.findByEmail(receiverEmail);
