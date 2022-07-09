@@ -1,0 +1,10 @@
+com.softarex.communication
+com.softarex.communication.config
+com.softarex.communication.controllers
+com.softarex.communication.dao
+com.softarex.communication.domain
+com.softarex.communication.domain.converters
+com.softarex.communication.exception
+com.softarex.communication.security
+com.softarex.communication.security.jwt
+com.softarex.communication.service
