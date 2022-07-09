@@ -13,8 +13,8 @@ import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 
-// TODO: make final
 
+/** Represents a conversation between two users */
 @Entity
 @Table(name = "conversations")
 @Data

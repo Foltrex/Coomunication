@@ -9,8 +9,10 @@ import javax.validation.constraints.Size;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-// TODO: make final
-
+/**
+ * Represents an user in the app
+ * A user can take part in many conversations
+ */
 @Entity
 @Table(name = "users")
 @Data
