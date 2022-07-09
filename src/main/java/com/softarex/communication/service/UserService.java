@@ -57,8 +57,8 @@ public class UserService {
         return userDao.count();
     }
 
-    public void delete(User user) {
-        userDao.delete(user);
+    public void delete(Long id) {
+        userDao.deleteById(id);
     }
 
 

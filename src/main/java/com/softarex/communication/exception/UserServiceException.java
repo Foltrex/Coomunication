@@ -1,6 +1,11 @@
 package com.softarex.communication.exception;
 
-public class UserServiceException extends Exception {
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import static org.springframework.http.HttpStatus.*;
+
+@ResponseStatus(value = NOT_FOUND, reason = "No such User")
+public class UserServiceException extends RuntimeException {
     public UserServiceException() {
         super();
     }

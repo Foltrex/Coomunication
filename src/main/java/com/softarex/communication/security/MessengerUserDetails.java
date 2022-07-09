@@ -1,18 +1,18 @@
 package com.softarex.communication.security;
 
+import com.google.common.collect.ImmutableList;
 import com.softarex.communication.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
+/** Represents logged in user */
 public class MessengerUserDetails implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    private User user;
+    private final User user;
 
     public MessengerUserDetails(User user) {
         this.user = user;
@@ -20,7 +20,7 @@ public class MessengerUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("USER"));
+        return ImmutableList.of(new SimpleGrantedAuthority("USER"));
     }
 
     public void updateLoggedUser(User user) {
@@ -65,5 +65,12 @@ public class MessengerUserDetails implements UserDetails {
         String name = user.getName();
         String surname = user.getSurname();
         return String.format("%s %s", name, surname);
+    }
+
+    @Override
+    public String toString() {
+        return "MessengerUserDetails{" +
+                "user=" + user +
+                '}';
     }
 }

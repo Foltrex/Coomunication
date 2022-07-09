@@ -1,9 +1,11 @@
 package com.softarex.communication.exception;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class ConversationServiceException extends Exception {
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+@ResponseStatus(value = NOT_FOUND, reason = "No such Conversation")
+public class ConversationServiceException extends RuntimeException {
     public ConversationServiceException() {
         super();
     }

@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
 
+/** Represents an answer from user */
 @Entity
 @Table(name = "answers")
 @Data

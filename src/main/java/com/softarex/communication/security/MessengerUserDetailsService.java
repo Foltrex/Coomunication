@@ -20,10 +20,8 @@ public class MessengerUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        log.info(String.format("Input email: %s", userName));
-
-        User user = null;
+    public MessengerUserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        User user;
         try {
             user = userService.findByEmail(userName);
         } catch (UserServiceException e) {

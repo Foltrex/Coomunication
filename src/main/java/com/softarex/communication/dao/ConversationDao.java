@@ -11,15 +11,8 @@ import java.util.List;
 
 @Repository
 public interface ConversationDao extends JpaRepository<Conversation, Long> {
-    long countBySender(User sender);
-
-    long countByReceiver(User receiver);
-
-    List<Conversation> findBySender(User sender);
 
     Page<Conversation> findBySender(User sender, Pageable pageable);
-
-    List<Conversation> findByReceiver(User user);
 
     Page<Conversation> findByReceiver(User user, Pageable pageable);
 }
