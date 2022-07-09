@@ -9,11 +9,16 @@ CREATE TABLE users (
 
 CREATE TYPE answer_types AS ENUM ('single line text', 'multiline text', 'radio button', 'checkbox', 'combobox', 'date');
 
+CREATE TABLE answers (
+	id SERIAL PRIMARY KEY,
+	type answer_types NOT NULL,
+	text VARCHAR(320)
+);
+
 CREATE TABLE conversations (
 	id SERIAL PRIMARY KEY,
 	sender_id INT NOT NULL REFERENCES users (id) ON DELETE CASCADE,
 	reciever_id INT REFERENCES users (id) ON DELETE CASCADE,
 	question_text VARCHAR(320) NOT NULL,
-	answer_type answer_types NOT NULL,
-	answer_text VARCHAR(320)
+	answer INT NOT NULL REFERENCES answers (id) ON DELETE CASCADE,
 );
