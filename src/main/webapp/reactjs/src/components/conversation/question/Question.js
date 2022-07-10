@@ -22,7 +22,7 @@ class Question extends React.Component {
                         <td>{conversation.receiver.email}</td>
                         <td>{conversation.questionText}</td>
                         <td>{conversation.answer.type}</td>
-                        <td>{conversation.answer.text}</td>
+                        <td>{!this.hasntAnswer(conversation.answer) && conversation.answer.text}</td>
                         <td className='icons-column'>
                             {this.hasntAnswer(conversation.answer) && <button 
                                 className='btn btn-link text-secondary' 

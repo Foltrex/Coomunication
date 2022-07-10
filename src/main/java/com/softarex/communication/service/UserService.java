@@ -45,22 +45,9 @@ public class UserService {
         return userDao.findByIdIsNot(userId);
     }
 
-    public List<User> findAll() {
-        return userDao.findAll();
-    }
-
-    public List<User> findByEmailIsNot(String email) {
-        return userDao.findByEmailIsNot(email);
-    }
-
-    public long count() {
-        return userDao.count();
-    }
-
     public void delete(Long id) {
         userDao.deleteById(id);
     }
-
 
     public User register(User user) throws UserServiceException {
         Optional<User> userWithTheSameEmail = userDao.findByEmail(user.getEmail());

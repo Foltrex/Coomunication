@@ -18,7 +18,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
 public class ConversationsController {
     private static final Integer ALL_RECORDS_PER_PAGE = -1;
 

@@ -1,9 +1,10 @@
 import React from 'react';
 import {Form, Modal, Button, Alert } from 'react-bootstrap';
-
+import {Navigate} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {fetchUser, updateUser} from '../../services/actions/userActions';
 import bcrypt from 'bcryptjs';
+import { logoutUser } from '../../services/actions/authActions';
 
 class EditUser extends React.Component {
     constructor(props) {
@@ -66,8 +67,9 @@ class EditUser extends React.Component {
 
             this.props.updateUser(user);
             setTimeout(() => {
-                window.location.href = '/questions';
-            }, 400)
+                this.props.logoutUser();
+                window.location.href = '';
+            }, 200)
         } else {
             this.setshowAlerts(true);
             this.setState({errorMessage: 'Invalid password'})
@@ -308,7 +310,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchUser: email => dispatch(fetchUser(email)),
-        updateUser: user => dispatch(updateUser(user))
+        updateUser: user => dispatch(updateUser(user)),
+        logoutUser: () => dispatch(logoutUser())
     };
 };
 

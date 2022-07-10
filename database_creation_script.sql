@@ -15,6 +15,21 @@ CREATE TABLE answers (
 	text VARCHAR(320)
 );
 
+
+CREATE OR REPLACE FUNCTION delete_related_answer() RETURNS TRIGGER AS $$
+BEGIN
+	DELETE FROM answers
+	WHERE id=OLD.answer_id;
+	RETURN OLD;
+END $$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER conversation_delete
+	AFTER DELETE
+	ON conversations
+	FOR EACH ROW
+	EXECUTE PROCEDURE delete_related_answer();
+
+
 CREATE TABLE conversations (
 	id SERIAL PRIMARY KEY,
 	sender_id INT NOT NULL REFERENCES users (id) ON DELETE CASCADE,
