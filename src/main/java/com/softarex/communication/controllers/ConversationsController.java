@@ -2,8 +2,6 @@ package com.softarex.communication.controllers;
 
 import com.softarex.communication.domain.Conversation;
 import com.softarex.communication.domain.User;
-import com.softarex.communication.exception.ConversationServiceException;
-import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.service.ConversationService;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,6 @@
 package com.softarex.communication.domain.converters;
 
 import com.softarex.communication.domain.Answer;
-import com.softarex.communication.domain.Conversation;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

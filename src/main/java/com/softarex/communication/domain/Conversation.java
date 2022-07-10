@@ -5,11 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static javax.persistence.CascadeType.*;
-import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.GenerationType.IDENTITY;
 
 

@@ -4,7 +4,6 @@ import com.softarex.communication.domain.User;
 import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

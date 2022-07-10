@@ -1,13 +1,11 @@
 package com.softarex.communication.controllers;
 
 import com.softarex.communication.domain.User;
-import com.softarex.communication.exception.UserServiceException;
 import com.softarex.communication.security.jwt.JwtTokenProvider;
 import com.softarex.communication.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;

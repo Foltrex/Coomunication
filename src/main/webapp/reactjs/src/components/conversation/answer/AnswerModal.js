@@ -1,6 +1,9 @@
 import React from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
-import DatePicker from 'react-date-picker';
+import "react-widgets/styles.css";
+
+import Combobox from "react-widgets/Combobox";
+import DatePicker from "react-widgets/DatePicker";
 
 import {connect} from 'react-redux';
 import {fetchConversation} from '../../../services/actions/conversationsAction';
@@ -123,13 +126,16 @@ class EditAnswerModal extends React.Component {
 
     buildCombobox = (answer) => {
         const answerList = this.splitAnswer(answer);
-        var answerOptions = answerList.map(option => <option value={option}>{option}</option>);
-
-        return <><input class='form-control' name='answerText' type='text' list='answerOptions' /> {answerOptions}<datalist id='answerOptions'></datalist></>;
+ 
+        return <Combobox
+                    data={answerList}
+                    name='answerText'
+                    defaultValue={answerList[0]}
+                />
     }
 
     buildDate = () => {
-        return <DatePicker onChange={() => this.setState({date: new Date()})} value={this.state.date} />
+        return <DatePicker name='answerText' placeholder="m/dd/yy" />;
     }
 
     splitAnswer = (answer) => {
