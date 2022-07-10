@@ -1,0 +1,5 @@
+export const FETCH_LOGGED_USER_NAME = 'FETCH_LOGGED_USER_NAME';
+export const LOGIN_REQUEST = "LOGIN_REQUEST";
+export const LOGOUT_REQUEST = "LOGOUT_REQUEST";
+export const SUCCESS = "SUCCESS";
+export const FAILURE = "FAILURE";
