@@ -1,5 +1,12 @@
 # Communication
 
+## Documentation
+[JavaDoc](https://foltrex.github.io/Coomunication/)
+
+
+## Source Code
+[Pull Request](https://github.com/Foltrex/Coomunication/pull/1)
+
 ## Task Description
 The main logic of the application - one user can ask a question to another user, and answer the questions asked to him.
 Application will consist of 8 main parts:
@@ -45,13 +52,6 @@ Here user will be able to create or edit questions.
 #### 8) Answer/Edit answer Modal (example)
 Using this dialog, the user can answer the question or edit an existing answer. The type of the field for the answer must match the type of the field in the question. For example, if question has answer type = date, then the field should look like datepicker (and so on). “From user” and “Question” fields should be read only.
 ![Answer Modal example](https://github.com/Foltrex/Coomunication/blob/gh-pages/assets/Answer%20the%20question(example).png)
-
-## Documentation
-[JavaDoc](https://foltrex.github.io/Coomunication/)
-
-
-## Source Code
-[Pull Request](https://github.com/Foltrex/Coomunication/pull/1)
 
 
 ## Images (real images of app, not from examples)
